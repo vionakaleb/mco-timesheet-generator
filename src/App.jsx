@@ -85,7 +85,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div>
-          <h1>Timesheet Generator</h1>
+          <h1>MCO Timesheet Generator</h1>
           <p className="subtitle">
             {activities.length} activities · {calendar.length} days
           </p>
@@ -115,6 +115,15 @@ export default function App() {
           onHourChange={handleHourChange}
         />
       </div>
+
+      <footer className="footer-container">
+        <div>Created by Viona Kaleb</div>
+        <div>
+          <a href="https://viona-kaleb.vercel.app/" target="_blank">
+            https://viona-kaleb.vercel.app/
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
