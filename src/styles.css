@@ -1,0 +1,295 @@
+:root {
+  --navy: #1b2a4a;
+  --navy-soft: #2c3e63;
+  --gold: #b8860b;
+  --ink: #1f2430;
+  --muted: #6b7280;
+  --line: #d8dce4;
+  --bg: #f5f6f9;
+  --panel: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 32px 64px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--navy);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.export {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.export:hover:not(:disabled) {
+  background: var(--navy-soft);
+}
+
+.export:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.panel-title {
+  margin: 0 0 16px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.field {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 9px 11px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(27, 42, 74, 0.1);
+}
+
+textarea {
+  resize: vertical;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+textarea.tall {
+  min-height: 120px;
+}
+
+textarea.taller {
+  min-height: 220px;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.grid-three {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.error {
+  color: #b42318;
+  font-size: 12.5px;
+  margin: 4px 0 0;
+}
+
+.error.banner {
+  background: #fef3f2;
+  border: 1px solid #fda29b;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.preview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.preview-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+table.sheet {
+  border-collapse: collapse;
+  font-size: 12px;
+  width: 100%;
+}
+
+table.sheet th,
+table.sheet td {
+  border: 1px solid #333;
+  padding: 6px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+table.sheet thead th {
+  background: #fff;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+table.sheet .identity th {
+  font-weight: 600;
+}
+
+table.sheet .logo-row td {
+  height: 84px;
+}
+
+table.sheet .logo-cell {
+  text-align: left;
+  vertical-align: middle;
+  padding: 10px 14px;
+}
+
+.logo-img {
+  height: 56px;
+  width: auto;
+  display: block;
+}
+
+table.sheet .identity td {
+  font-weight: 400;
+}
+
+table.sheet .spacer td {
+  height: 14px;
+  border-left: 1px solid #333;
+  border-right: 1px solid #333;
+  border-top: none;
+  border-bottom: none;
+}
+
+.col-no {
+  width: 44px;
+}
+
+.col-desc {
+  text-align: left;
+  min-width: 320px;
+  max-width: 420px;
+}
+
+.col-sum {
+  width: 70px;
+}
+
+td.day {
+  width: 40px;
+  min-width: 40px;
+}
+
+.hour-input {
+  width: 100%;
+  border: none;
+  text-align: center;
+  padding: 4px 2px;
+  font-size: 12px;
+  background: transparent;
+}
+
+.hour-input:focus {
+  box-shadow: none;
+  background: #eef1f7;
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.total-row td {
+  background: #eef1f7;
+  font-weight: 700;
+}
+
+.empty {
+  padding: 28px;
+  color: var(--muted);
+  font-style: italic;
+}
