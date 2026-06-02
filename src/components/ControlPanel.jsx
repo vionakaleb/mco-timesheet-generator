@@ -40,7 +40,7 @@ export default function ControlPanel({ form, onChange, ticketError }) {
         <Field label="Year">
           <input type="number" min="2000" max="2100" value={form.year} onChange={update('year')} />
         </Field>
-        <Field label="Default weekday hours">
+        <Field label="Default hours">
           <input value={form.defaultHours} onChange={update('defaultHours')} placeholder="e.g. 8" />
         </Field>
       </div>

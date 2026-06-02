@@ -1,11 +1,17 @@
-import { dayTotal, sumHours } from '../lib/defaults';
-import { monthLabel } from '../lib/calendar';
-import { identitySpans } from '../lib/layout';
-import { LOGO_DATA_URI } from '../assets/logo';
+import { dayTotal, sumHours } from "../lib/defaults";
+import { monthLabel } from "../lib/calendar";
+import { identitySpans } from "../lib/layout";
+import { LOGO_DATA_URI } from "../assets/logo";
 
 const LOGO_SPAN = 7;
 
-export default function TimesheetPreview({ form, calendar, activities, hours, onHourChange }) {
+export default function TimesheetPreview({
+  form,
+  calendar,
+  activities,
+  hours,
+  onHourChange,
+}) {
   const grandTotal = sumHours(hours);
   const span = Math.max(activities.length, 1);
   const totalColumns = calendar.length + 5;
@@ -22,11 +28,15 @@ export default function TimesheetPreview({ form, calendar, activities, hours, on
           <thead>
             <tr className="logo-row">
               <td colSpan={LOGO_SPAN} className="logo-cell">
-                <img src={LOGO_DATA_URI} alt="mandiri mco" className="logo-img" />
+                <img
+                  src={LOGO_DATA_URI}
+                  alt="mandiri mco"
+                  className="logo-img"
+                />
               </td>
-              {Array.from({ length: Math.max(totalColumns - LOGO_SPAN, 0) }, (_, i) => (
+              {/* {Array.from({ length: Math.max(totalColumns - LOGO_SPAN, 0) }, (_, i) => (
                 <td key={`logo-pad-${i}`} />
-              ))}
+              ))} */}
             </tr>
             <tr className="identity">
               <th colSpan={ids.role}>Role</th>
@@ -50,7 +60,9 @@ export default function TimesheetPreview({ form, calendar, activities, hours, on
               <td colSpan={totalColumns} />
             </tr>
             <tr>
-              <th rowSpan={2} className="col-no">No</th>
+              <th rowSpan={2} className="col-no">
+                No
+              </th>
               <th rowSpan={2} className="col-desc">
                 Project Name
                 <br />
@@ -92,7 +104,7 @@ export default function TimesheetPreview({ form, calendar, activities, hours, on
                       <td key={d.day} rowSpan={span} className="day">
                         <input
                           className="hour-input"
-                          value={hours[d.day] ?? ''}
+                          value={hours[d.day] ?? ""}
                           onChange={(e) => onHourChange(d.day, e.target.value)}
                         />
                       </td>

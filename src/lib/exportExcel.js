@@ -88,11 +88,11 @@ export async function exportTimesheet({
   const totalRow = lastActivity + 1;
 
   paintMerged(ws, 0, 0, LOGO_BAND_ROWS - 1, LOGO_SPAN - 1, "", FONT, CENTER);
-  for (let r = 0; r < LOGO_BAND_ROWS; r += 1) {
-    for (let c = LOGO_SPAN; c <= signCol; c += 1) {
-      paint(ws, r, c, "", FONT, CENTER);
-    }
-  }
+  // for (let r = 0; r < LOGO_BAND_ROWS; r += 1) {
+  //   for (let c = LOGO_SPAN; c <= signCol; c += 1) {
+  //     paint(ws, r, c, "", FONT, CENTER);
+  //   }
+  // }
 
   const group = (range, row, value, font) =>
     paintMerged(ws, row, range.start, row, range.end, value, font, CENTER);
