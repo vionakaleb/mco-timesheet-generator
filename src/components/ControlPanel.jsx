@@ -17,6 +17,8 @@ export default function ControlPanel({
   onChange,
   onSignature,
   onClearSignature,
+  onLogo,
+  onClearLogo,
   ticketError,
 }) {
   const [showHelp, setShowHelp] = useState(false);
@@ -117,6 +119,25 @@ export default function ControlPanel({
           />
         </Field>
       </div>
+
+      <Field label="Custom Logo (image, optional)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onLogo(event.target.files?.[0])}
+        />
+        <span className="field-hint">
+          Leave empty to use the default Mandiri MCO logo.
+        </span>
+      </Field>
+      {form.logoImage ? (
+        <div className="sig-preview">
+          <img src={form.logoImage} alt="custom logo" />
+          <button type="button" className="link-btn" onClick={onClearLogo}>
+            Remove
+          </button>
+        </div>
+      ) : null}
 
       <Field label="Employee Signature (image)">
         <input

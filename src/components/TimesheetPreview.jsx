@@ -32,7 +32,7 @@ export default function TimesheetPreview({
             <tr className="logo-row">
               <td colSpan={LOGO_SPAN} className="logo-cell">
                 <img
-                  src={LOGO_DATA_URI}
+                  src={form.logoImage || LOGO_DATA_URI}
                   alt="mandiri mco"
                   className="logo-img"
                 />

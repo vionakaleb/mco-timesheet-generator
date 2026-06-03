@@ -82,12 +82,29 @@ function isNumeric(value) {
   return value !== "" && Number.isFinite(Number(value));
 }
 
-function signatureExtension(dataUri) {
+function imageExtensionFromDataUri(dataUri) {
   const match = /^data:(image\/[a-zA-Z+]+);base64,/.exec(dataUri ?? "");
   const mime = match ? match[1] : "image/png";
   if (mime === "image/jpeg") return "jpeg";
   if (mime === "image/gif") return "gif";
   return "png";
+}
+
+function resolveLogo(customLogo) {
+  if (customLogo && customLogo.dataUri) {
+    return {
+      base64: customLogo.dataUri.split(",")[1],
+      extension: imageExtensionFromDataUri(customLogo.dataUri),
+      width: customLogo.width || LOGO_WIDTH,
+      height: customLogo.height || LOGO_HEIGHT,
+    };
+  }
+  return {
+    base64: LOGO_BASE64,
+    extension: LOGO_EXTENSION,
+    width: LOGO_WIDTH,
+    height: LOGO_HEIGHT,
+  };
 }
 
 function buildLegendSheet(wb) {
@@ -130,7 +147,7 @@ function addSignature(ws, wb, signature, range, rowIndex) {
 
   const imageId = wb.addImage({
     base64: signature.dataUri.split(",")[1],
-    extension: signatureExtension(signature.dataUri),
+    extension: imageExtensionFromDataUri(signature.dataUri),
   });
   ws.addImage(imageId, {
     tl: {
@@ -153,6 +170,7 @@ export async function exportTimesheet({
   hours,
   dayTypes,
   signature,
+  logo,
 }) {
   if (calendar.length === 0) {
     throw new Error("Pick a valid month and year before exporting.");
@@ -354,10 +372,13 @@ export async function exportTimesheet({
   for (let r = firstActivity; r <= lastActivity; r += 1)
     ws.getRow(r + 1).height = 30;
 
-  const logoWidth = Math.round((LOGO_PIXEL_HEIGHT * LOGO_WIDTH) / LOGO_HEIGHT);
+  const activeLogo = resolveLogo(logo);
+  const logoWidth = Math.round(
+    (LOGO_PIXEL_HEIGHT * activeLogo.width) / activeLogo.height,
+  );
   const logoId = wb.addImage({
-    base64: LOGO_BASE64,
-    extension: LOGO_EXTENSION,
+    base64: activeLogo.base64,
+    extension: activeLogo.extension,
   });
   ws.addImage(logoId, {
     tl: { col: 0.2, row: 0.3 },

@@ -25,6 +25,9 @@ const initialForm = {
   signatureImage: "",
   signatureWidth: 0,
   signatureHeight: 0,
+  logoImage: "",
+  logoWidth: 0,
+  logoHeight: 0,
   generalActivities: DEFAULT_GENERAL_ACTIVITIES.join("\n"),
   ticketsJson: "",
 };
@@ -73,8 +76,6 @@ export default function App() {
   const activities = useMemo(() => {
     const combined = [...generalList, ...tickets.items];
     const limit = Number(form.limitRows) || 20;
-
-    // If the total is over the limit, slice it
     return combined.length > limit ? combined.slice(0, limit) : combined;
   }, [generalList, tickets.items, form.limitRows]);
 
@@ -92,7 +93,7 @@ export default function App() {
   const handleHourChange = (day, value) =>
     setHours((prev) => ({ ...prev, [day]: value }));
 
-  const handleSignature = (file) => {
+  const readImageFile = (file, fieldMap) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
@@ -101,14 +102,21 @@ export default function App() {
       image.onload = () =>
         setForm((prev) => ({
           ...prev,
-          signatureImage: dataUri,
-          signatureWidth: image.naturalWidth,
-          signatureHeight: image.naturalHeight,
+          [fieldMap.image]: dataUri,
+          [fieldMap.width]: image.naturalWidth,
+          [fieldMap.height]: image.naturalHeight,
         }));
       image.src = dataUri;
     };
     reader.readAsDataURL(file);
   };
+
+  const handleSignature = (file) =>
+    readImageFile(file, {
+      image: "signatureImage",
+      width: "signatureWidth",
+      height: "signatureHeight",
+    });
 
   const clearSignature = () =>
     setForm((prev) => ({
@@ -116,6 +124,21 @@ export default function App() {
       signatureImage: "",
       signatureWidth: 0,
       signatureHeight: 0,
+    }));
+
+  const handleLogo = (file) =>
+    readImageFile(file, {
+      image: "logoImage",
+      width: "logoWidth",
+      height: "logoHeight",
+    });
+
+  const clearLogo = () =>
+    setForm((prev) => ({
+      ...prev,
+      logoImage: "",
+      logoWidth: 0,
+      logoHeight: 0,
     }));
 
   const buildExportPayload = () => ({
@@ -134,6 +157,13 @@ export default function App() {
           dataUri: form.signatureImage,
           width: form.signatureWidth,
           height: form.signatureHeight,
+        }
+      : null,
+    logo: form.logoImage
+      ? {
+          dataUri: form.logoImage,
+          width: form.logoWidth,
+          height: form.logoHeight,
         }
       : null,
   });
@@ -191,6 +221,8 @@ export default function App() {
           onChange={handleChange}
           onSignature={handleSignature}
           onClearSignature={clearSignature}
+          onLogo={handleLogo}
+          onClearLogo={clearLogo}
           ticketError={tickets.error}
         />
         <TimesheetPreview

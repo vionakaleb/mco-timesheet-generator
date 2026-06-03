@@ -24,6 +24,8 @@ const SIGNATURE_MAX_HEIGHT = 36;
 const IDENTITY_ROW_HEIGHT = 44;
 const IDENTITY_LABEL_HEIGHT = 16;
 
+const LOGO_HEIGHT_PT = 36;
+
 function hexToRgb(hex) {
   if (!hex) return null;
   const value = hex.replace("#", "");
@@ -40,6 +42,23 @@ function dataUriExtension(dataUri) {
   if (subtype === "jpeg" || subtype === "jpg") return "JPEG";
   if (subtype === "gif") return "GIF";
   return "PNG";
+}
+
+export function resolveLogo(customLogo) {
+  if (customLogo && customLogo.dataUri) {
+    return {
+      source: customLogo.dataUri,
+      format: dataUriExtension(customLogo.dataUri),
+      width: customLogo.width || LOGO_WIDTH,
+      height: customLogo.height || LOGO_HEIGHT,
+    };
+  }
+  return {
+    source: `data:image/${LOGO_EXTENSION};base64,${LOGO_BASE64}`,
+    format: LOGO_EXTENSION.toUpperCase(),
+    width: LOGO_WIDTH,
+    height: LOGO_HEIGHT,
+  };
 }
 
 function drawIdentityHeader(doc, params, pageWidth) {
@@ -117,21 +136,20 @@ function drawIdentityHeader(doc, params, pageWidth) {
   return startY + labelHeight + rowHeight + 10;
 }
 
-function drawLogo(doc) {
-  const logoHeightPt = 36;
-  const logoWidthPt = (logoHeightPt * LOGO_WIDTH) / LOGO_HEIGHT;
-  const ext = LOGO_EXTENSION.toUpperCase();
+function drawLogo(doc, customLogo) {
+  const activeLogo = resolveLogo(customLogo);
+  const logoWidthPt = (LOGO_HEIGHT_PT * activeLogo.width) / activeLogo.height;
   try {
     doc.addImage(
-      `data:image/${LOGO_EXTENSION};base64,${LOGO_BASE64}`,
-      ext,
+      activeLogo.source,
+      activeLogo.format,
       PAGE_MARGIN,
       PAGE_MARGIN,
       logoWidthPt,
-      logoHeightPt,
+      LOGO_HEIGHT_PT,
     );
   } catch (err) {
-    // Skip the logo if format is unsupported.
+    // Skip the logo if the format is unsupported.
   }
 }
 
@@ -145,9 +163,6 @@ function buildTableBody(activities, calendar, hours) {
       },
     ];
 
-    // The day cells are merged across all rows, so only the first row holds the value.
-    // jspdf-autotable does not support row-spanning across body rows the way Excel
-    // merges do, so we put the hour value in every row but only show it on the first.
     calendar.forEach((d) => {
       if (i === 0) {
         row.push({
@@ -217,7 +232,6 @@ function buildHeadRows(calendar, dayTypes) {
 
 function drawLegend(doc, startY, pageWidth) {
   const boxSize = 10;
-  const gap = 6;
   const itemPadding = 14;
   doc.setFont(FONT_FAMILY, "bold");
   doc.setFontSize(8);
@@ -238,7 +252,6 @@ function drawLegend(doc, startY, pageWidth) {
     x += boxSize + 4 + labelWidth + itemPadding;
 
     if (x > pageWidth - PAGE_MARGIN - 100) {
-      // Stop placing items if we run out of room.
       x = pageWidth;
     }
   });
@@ -256,6 +269,7 @@ export async function exportTimesheetPDF({
   hours,
   dayTypes,
   signature,
+  logo,
 }) {
   if (calendar.length === 0) {
     throw new Error("Pick a valid month and year before exporting.");
@@ -273,7 +287,7 @@ export async function exportTimesheetPDF({
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  drawLogo(doc);
+  drawLogo(doc, logo);
 
   const tableStartY = drawIdentityHeader(
     doc,
@@ -292,10 +306,8 @@ export async function exportTimesheetPDF({
   const body = buildTableBody(activities, calendar, hours);
   body.push(buildTotalRow(calendar, hours));
 
-  // The counter sign value goes into the second-to-last column of the first body row.
   if (counterSign && body.length > 1) {
     const firstRow = body[0];
-    // Find the counter-sign cell (it has rowSpan and is the second from end among the spanned cells).
     const spannedCells = firstRow.filter((c) => c.rowSpan);
     if (spannedCells.length >= 2) {
       spannedCells[spannedCells.length - 2].content = counterSign;
@@ -304,7 +316,6 @@ export async function exportTimesheetPDF({
 
   const usableWidth = pageWidth - PAGE_MARGIN * 2;
 
-  // Allocate fixed columns first, then split the rest evenly across day columns.
   const noColumnWidth = 24;
   const sumColumnWidth = 36;
   const counterSignWidth = 70;
@@ -312,8 +323,6 @@ export async function exportTimesheetPDF({
   const fixedColumnsTotal =
     noColumnWidth + sumColumnWidth + counterSignWidth + signatureWidth;
 
-  // Description column takes a share of what's left, with day columns filling the rest.
-  // Cap description at a reasonable width and let day columns expand if there's room.
   const remainingAfterFixed = usableWidth - fixedColumnsTotal;
   const minDayWidth = 14;
   const idealDescWidth = 140;
@@ -323,7 +332,6 @@ export async function exportTimesheetPDF({
     (remainingAfterFixed - descColumnWidth) / calendar.length;
 
   if (dayColumnWidth < minDayWidth) {
-    // Shrink the description column to give day columns enough room.
     dayColumnWidth = minDayWidth;
     descColumnWidth = remainingAfterFixed - dayColumnWidth * calendar.length;
   }
