@@ -1,15 +1,7 @@
 export const DEFAULT_GENERAL_ACTIVITIES = [
-  "Support development, tracing & bugfixing for squad 6",
-  "Code review pull requests in WBA, E-Form, QR E-Form",
+  "Support development, tracing & bugfixing for squad 6.",
+  "Code review pull requests in WBA, E-Form, QR E-Form"
 ];
-
-export function buildHours(calendar, defaultWeekdayHours) {
-  const hours = {};
-  for (const entry of calendar) {
-    hours[entry.day] = entry.weekend ? "Weekend" : defaultWeekdayHours;
-  }
-  return hours;
-}
 
 export function sumHours(hours) {
   return Object.values(hours).reduce((total, value) => {

@@ -1,6 +1,7 @@
 import { dayTotal, sumHours } from "../lib/defaults";
 import { monthLabel } from "../lib/calendar";
 import { identitySpans } from "../lib/layout";
+import { typeColor, TYPE_HEX, TYPE_LABEL, LEGEND_TYPES } from "../lib/dayTypes";
 import { LOGO_DATA_URI } from "../assets/logo";
 
 const LOGO_SPAN = 7;
@@ -10,12 +11,14 @@ export default function TimesheetPreview({
   calendar,
   activities,
   hours,
+  dayTypes,
   onHourChange,
 }) {
   const grandTotal = sumHours(hours);
   const span = Math.max(activities.length, 1);
   const totalColumns = calendar.length + 5;
   const ids = identitySpans(calendar.length);
+  const dayBg = (day) => ({ background: typeColor(dayTypes[day]) });
 
   return (
     <section className="panel preview">
@@ -34,9 +37,12 @@ export default function TimesheetPreview({
                   className="logo-img"
                 />
               </td>
-              {/* {Array.from({ length: Math.max(totalColumns - LOGO_SPAN, 0) }, (_, i) => (
-                <td key={`logo-pad-${i}`} />
-              ))} */}
+              {/* {Array.from(
+                { length: Math.max(totalColumns - LOGO_SPAN, 0) },
+                (_, i) => (
+                  <td key={`logo-pad-${i}`} />
+                ),
+              )} */}
             </tr>
             <tr className="identity">
               <th colSpan={ids.role}>Role</th>
@@ -50,7 +56,15 @@ export default function TimesheetPreview({
             <tr className="identity">
               <td colSpan={ids.role}>{form.role}</td>
               <td colSpan={ids.name}>{form.name}</td>
-              <td colSpan={ids.empSignature} />
+              <td colSpan={ids.empSignature} className="sig-cell">
+                {form.signatureImage ? (
+                  <img
+                    src={form.signatureImage}
+                    alt="employee signature"
+                    className="sig-img"
+                  />
+                ) : null}
+              </td>
               <td colSpan={ids.month}>{monthLabel(Number(form.month))}</td>
               <td colSpan={ids.year}>{form.year}</td>
               <td colSpan={ids.departmentHead}>{form.departmentHead}</td>
@@ -69,7 +83,7 @@ export default function TimesheetPreview({
                 Activity Description
               </th>
               {calendar.map((d) => (
-                <th key={d.day} className="day">
+                <th key={d.day} className="day" style={dayBg(d.day)}>
                   {d.day}
                 </th>
               ))}
@@ -81,7 +95,7 @@ export default function TimesheetPreview({
             </tr>
             <tr>
               {calendar.map((d) => (
-                <th key={d.day} className="day">
+                <th key={d.day} className="day" style={dayBg(d.day)}>
                   {d.label}
                 </th>
               ))}
@@ -101,7 +115,12 @@ export default function TimesheetPreview({
                   <td className="col-desc">{desc}</td>
                   {i === 0 &&
                     calendar.map((d) => (
-                      <td key={d.day} rowSpan={span} className="day">
+                      <td
+                        key={d.day}
+                        rowSpan={span}
+                        className="day"
+                        style={dayBg(d.day)}
+                      >
                         <input
                           className="hour-input"
                           value={hours[d.day] ?? ""}
@@ -132,6 +151,19 @@ export default function TimesheetPreview({
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <div className="legend">
+        <span className="legend-title">Legends:</span>
+        {LEGEND_TYPES.map((t) => (
+          <span key={t} className="legend-item">
+            <span
+              className="legend-swatch"
+              style={{ background: `#${TYPE_HEX[t]}` }}
+            />
+            {TYPE_LABEL[t]}
+          </span>
+        ))}
       </div>
     </section>
   );

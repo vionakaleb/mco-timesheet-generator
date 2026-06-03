@@ -3,6 +3,7 @@ import { monthLabel } from "./calendar";
 import { dayTotal, sumHours } from "./defaults";
 import { identityRanges } from "./layout";
 import { clampToLines } from "./text";
+import { TYPE_HEX, TYPE_LABEL, LEGEND_TYPES } from "./dayTypes";
 import {
   LOGO_BASE64,
   LOGO_EXTENSION,
@@ -26,19 +27,47 @@ const DESC_COL_WIDTH = 58;
 const DESC_CHARS_PER_LINE = Math.round(DESC_COL_WIDTH * 1.1);
 const DESC_MAX_LINES = 2;
 
-function paint(ws, row, col, value, font, align) {
+const SIGNATURE_MAX_WIDTH = 170;
+const SIGNATURE_MAX_HEIGHT = 30;
+
+function paint(ws, row, col, value, font, align, fillHex) {
   const cell = ws.getCell(row + 1, col + 1);
   if (value !== undefined) cell.value = value;
   cell.font = font ?? FONT;
   cell.alignment = align ?? CENTER;
   cell.border = box;
+  if (fillHex) {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: `FF${fillHex}` },
+    };
+  }
   return cell;
 }
 
-function paintMerged(ws, top, left, bottom, right, value, font, align) {
+function paintMerged(
+  ws,
+  top,
+  left,
+  bottom,
+  right,
+  value,
+  font,
+  align,
+  fillHex,
+) {
   for (let r = top; r <= bottom; r += 1) {
     for (let c = left; c <= right; c += 1) {
-      paint(ws, r, c, r === top && c === left ? value : "", font, align);
+      paint(
+        ws,
+        r,
+        c,
+        r === top && c === left ? value : "",
+        font,
+        align,
+        fillHex,
+      );
     }
   }
   if (bottom > top || right > left) {
@@ -48,6 +77,14 @@ function paintMerged(ws, top, left, bottom, right, value, font, align) {
 
 function isNumeric(value) {
   return value !== "" && Number.isFinite(Number(value));
+}
+
+function signatureExtension(dataUri) {
+  const match = /^data:(image\/[a-zA-Z+]+);base64,/.exec(dataUri ?? "");
+  const mime = match ? match[1] : "image/png";
+  if (mime === "image/jpeg") return "jpeg";
+  if (mime === "image/gif") return "gif";
+  return "png";
 }
 
 export async function exportTimesheet({
@@ -60,6 +97,8 @@ export async function exportTimesheet({
   calendar,
   activities,
   hours,
+  dayTypes,
+  signature,
 }) {
   if (calendar.length === 0) {
     throw new Error("Pick a valid month and year before exporting.");
@@ -88,11 +127,11 @@ export async function exportTimesheet({
   const totalRow = lastActivity + 1;
 
   paintMerged(ws, 0, 0, LOGO_BAND_ROWS - 1, LOGO_SPAN - 1, "", FONT, CENTER);
-  // for (let r = 0; r < LOGO_BAND_ROWS; r += 1) {
-  //   for (let c = LOGO_SPAN; c <= signCol; c += 1) {
-  //     paint(ws, r, c, "", FONT, CENTER);
-  //   }
-  // }
+  for (let r = 0; r < LOGO_BAND_ROWS; r += 1) {
+    for (let c = LOGO_SPAN; c <= signCol; c += 1) {
+      paint(ws, r, c, "", FONT, CENTER);
+    }
+  }
 
   const group = (range, row, value, font) =>
     paintMerged(ws, row, range.start, row, range.end, value, font, CENTER);
@@ -157,8 +196,9 @@ export async function exportTimesheet({
     CENTER,
   );
   calendar.forEach((d, i) => {
-    paint(ws, headerRow, dayStart + i, d.day, FONT_BOLD, CENTER);
-    paint(ws, weekdayRow, dayStart + i, d.label, FONT_BOLD, CENTER);
+    const fill = TYPE_HEX[dayTypes[d.day]];
+    paint(ws, headerRow, dayStart + i, d.day, FONT_BOLD, CENTER, fill);
+    paint(ws, weekdayRow, dayStart + i, d.label, FONT_BOLD, CENTER, fill);
   });
 
   activities.forEach((desc, i) => {
@@ -176,6 +216,7 @@ export async function exportTimesheet({
   calendar.forEach((d, i) => {
     const value = hours[d.day];
     const cellValue = isNumeric(value) ? Number(value) : value;
+    const fill = TYPE_HEX[dayTypes[d.day]];
     paintMerged(
       ws,
       firstActivity,
@@ -185,6 +226,7 @@ export async function exportTimesheet({
       cellValue,
       FONT,
       CENTER,
+      fill,
     );
   });
   paintMerged(
@@ -233,6 +275,14 @@ export async function exportTimesheet({
   paint(ws, totalRow, counterCol, "", FONT, CENTER);
   paint(ws, totalRow, signCol, "", FONT, CENTER);
 
+  const legendRow = totalRow + 2;
+  paintMerged(ws, legendRow, 0, legendRow, 1, "Legend:", FONT_BOLD, CENTER);
+  LEGEND_TYPES.forEach((type, i) => {
+    const r = legendRow + 1 + i;
+    paint(ws, r, 0, "", FONT, CENTER, TYPE_HEX[type]);
+    paint(ws, r, 1, TYPE_LABEL[type], FONT, LEFT);
+  });
+
   ws.getColumn(1).width = 6;
   ws.getColumn(2).width = DESC_COL_WIDTH;
   for (let i = 0; i < dayCount; i += 1)
@@ -243,20 +293,41 @@ export async function exportTimesheet({
 
   for (let r = 0; r < LOGO_BAND_ROWS; r += 1) ws.getRow(r + 1).height = 22;
   ws.getRow(idLabelRow + 1).height = 20;
-  ws.getRow(idValueRow + 1).height = 24;
+  ws.getRow(idValueRow + 1).height = 30;
   ws.getRow(spacerRow + 1).height = 8;
   for (let r = firstActivity; r <= lastActivity; r += 1)
     ws.getRow(r + 1).height = 30;
 
   const logoWidth = Math.round((LOGO_PIXEL_HEIGHT * LOGO_WIDTH) / LOGO_HEIGHT);
-  const imageId = wb.addImage({
+  const logoId = wb.addImage({
     base64: LOGO_BASE64,
     extension: LOGO_EXTENSION,
   });
-  ws.addImage(imageId, {
+  ws.addImage(logoId, {
     tl: { col: 0.2, row: 0.3 },
     ext: { width: logoWidth, height: LOGO_PIXEL_HEIGHT },
   });
+
+  if (signature && signature.dataUri) {
+    const natW = signature.width || SIGNATURE_MAX_WIDTH;
+    const natH = signature.height || SIGNATURE_MAX_HEIGHT;
+    const scale = Math.min(
+      SIGNATURE_MAX_WIDTH / natW,
+      SIGNATURE_MAX_HEIGHT / natH,
+      1,
+    );
+    const sigId = wb.addImage({
+      base64: signature.dataUri.split(",")[1],
+      extension: signatureExtension(signature.dataUri),
+    });
+    ws.addImage(sigId, {
+      tl: { col: ids.empSignature.start + 0.15, row: idValueRow + 0.1 },
+      ext: {
+        width: Math.round(natW * scale),
+        height: Math.round(natH * scale),
+      },
+    });
+  }
 
   const buffer = await wb.xlsx.writeBuffer();
   const blob = new Blob([buffer], {

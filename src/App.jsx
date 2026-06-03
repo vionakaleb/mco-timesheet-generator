@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import ControlPanel from "./components/ControlPanel.jsx";
+import ControlPanel, { Field } from "./components/ControlPanel.jsx";
 import TimesheetPreview from "./components/TimesheetPreview.jsx";
 import { buildCalendar } from "./lib/calendar";
 import { parseTickets } from "./lib/parseTickets";
-import { DEFAULT_GENERAL_ACTIVITIES, buildHours } from "./lib/defaults";
+import { DEFAULT_GENERAL_ACTIVITIES } from "./lib/defaults";
+import { parseDays, buildDayTypes, buildHours } from "./lib/dayTypes";
 import { exportTimesheet } from "./lib/exportExcel";
+import { loadForm, saveForm, defaultPeriod } from "./lib/storage";
 
 const now = new Date();
 
@@ -16,12 +18,22 @@ const initialForm = {
   defaultHours: "9",
   departmentHead: "",
   counterSign: "",
+  cutiBersama: "",
+  cutiPribadi: "",
+  signatureImage: "",
+  signatureWidth: 0,
+  signatureHeight: 0,
   generalActivities: DEFAULT_GENERAL_ACTIVITIES.join("\n"),
   ticketsJson: "",
 };
 
+function createInitialForm() {
+  const { month, year } = defaultPeriod();
+  return { ...initialForm, ...loadForm(), month, year };
+}
+
 export default function App() {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(createInitialForm);
   const [hours, setHours] = useState({});
   const [exportError, setExportError] = useState("");
 
@@ -32,10 +44,19 @@ export default function App() {
     () => (year && month ? buildCalendar(year, month) : []),
     [year, month],
   );
-
   const tickets = useMemo(
     () => parseTickets(form.ticketsJson),
     [form.ticketsJson],
+  );
+
+  const dayTypes = useMemo(
+    () =>
+      buildDayTypes(
+        calendar,
+        parseDays(form.cutiBersama),
+        parseDays(form.cutiPribadi),
+      ),
+    [calendar, form.cutiBersama, form.cutiPribadi],
   );
 
   const generalList = useMemo(
@@ -53,14 +74,44 @@ export default function App() {
   );
 
   useEffect(() => {
-    setHours(buildHours(calendar, form.defaultHours));
-  }, [calendar, form.defaultHours]);
+    setHours(buildHours(calendar, form.defaultHours, dayTypes));
+  }, [calendar, form.defaultHours, dayTypes]);
+
+  useEffect(() => {
+    saveForm(form);
+  }, [form]);
 
   const handleChange = (key, value) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleHourChange = (day, value) =>
     setHours((prev) => ({ ...prev, [day]: value }));
+
+  const handleSignature = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUri = reader.result;
+      const image = new Image();
+      image.onload = () =>
+        setForm((prev) => ({
+          ...prev,
+          signatureImage: dataUri,
+          signatureWidth: image.naturalWidth,
+          signatureHeight: image.naturalHeight,
+        }));
+      image.src = dataUri;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearSignature = () =>
+    setForm((prev) => ({
+      ...prev,
+      signatureImage: "",
+      signatureWidth: 0,
+      signatureHeight: 0,
+    }));
 
   const handleExport = async () => {
     setExportError("");
@@ -75,6 +126,14 @@ export default function App() {
         calendar,
         activities,
         hours,
+        dayTypes,
+        signature: form.signatureImage
+          ? {
+              dataUri: form.signatureImage,
+              width: form.signatureWidth,
+              height: form.signatureHeight,
+            }
+          : null,
       });
     } catch (error) {
       setExportError(error.message);
@@ -105,6 +164,8 @@ export default function App() {
         <ControlPanel
           form={form}
           onChange={handleChange}
+          onSignature={handleSignature}
+          onClearSignature={clearSignature}
           ticketError={tickets.error}
         />
         <TimesheetPreview
@@ -112,12 +173,13 @@ export default function App() {
           calendar={calendar}
           activities={activities}
           hours={hours}
+          dayTypes={dayTypes}
           onHourChange={handleHourChange}
         />
       </div>
 
       <footer className="footer-container">
-        <div>Created by Viona Kaleb</div>
+        <Field label="Created by Viona Kaleb" />
         <div>
           <a href="https://viona-kaleb.vercel.app/" target="_blank">
             https://viona-kaleb.vercel.app/

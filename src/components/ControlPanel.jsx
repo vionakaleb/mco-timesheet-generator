@@ -2,7 +2,7 @@ import { monthLabel } from "../lib/calendar";
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
-function Field({ label, children }) {
+export function Field({ label, children }) {
   return (
     <label className="field">
       <span className="field-label">{label}</span>
@@ -11,7 +11,13 @@ function Field({ label, children }) {
   );
 }
 
-export default function ControlPanel({ form, onChange, ticketError }) {
+export default function ControlPanel({
+  form,
+  onChange,
+  onSignature,
+  onClearSignature,
+  ticketError,
+}) {
   const update = (key) => (event) => onChange(key, event.target.value);
 
   return (
@@ -80,6 +86,39 @@ export default function ControlPanel({ form, onChange, ticketError }) {
         </Field>
       </div>
 
+      <div className="grid-two">
+        <Field label="Cuti Bersama Date ">
+          <input
+            value={form.cutiBersama}
+            onChange={update("cutiBersama")}
+            placeholder="e.g. 3, 10"
+          />
+        </Field>
+        <Field label="Cuti Pribadi Date">
+          <input
+            value={form.cutiPribadi}
+            onChange={update("cutiPribadi")}
+            placeholder="e.g. 13, 20"
+          />
+        </Field>
+      </div>
+
+      <Field label="Employee Signature (image)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onSignature(event.target.files?.[0])}
+        />
+      </Field>
+      {form.signatureImage ? (
+        <div className="sig-preview">
+          <img src={form.signatureImage} alt="employee signature" />
+          <button type="button" className="link-btn" onClick={onClearSignature}>
+            Remove
+          </button>
+        </div>
+      ) : null}
+
       <Field label="General Activities (one per line)">
         <textarea
           className="tall"
@@ -90,6 +129,7 @@ export default function ControlPanel({ form, onChange, ticketError }) {
       </Field>
 
       <Field label="Ticket List (JSON array with key and summary)">
+        <Field label="Get Jira API issueTable.table" />
         <textarea
           className="taller"
           value={form.ticketsJson}
