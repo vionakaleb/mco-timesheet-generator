@@ -1,6 +1,6 @@
 export const DEFAULT_GENERAL_ACTIVITIES = [
-  "Support development, tracing & bugfixing for squad 6.",
-  "Code review pull requests in WBA, E-Form, QR E-Form"
+  "Support development, tracing & bugfixing for squad 6",
+  "Code review Pull Requests in WBA, EForm, QR EForm",
 ];
 
 export function sumHours(hours) {
