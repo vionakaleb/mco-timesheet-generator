@@ -1,4 +1,5 @@
 import { monthLabel } from "../lib/calendar";
+import { useState } from "react";
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -18,6 +19,8 @@ export default function ControlPanel({
   onClearSignature,
   ticketError,
 }) {
+  const [showHelp, setShowHelp] = useState(false);
+
   const update = (key) => (event) => onChange(key, event.target.value);
 
   return (
@@ -128,14 +131,46 @@ export default function ControlPanel({
         />
       </Field>
 
-      <Field label="Ticket List (JSON array with key and summary)">
-        <Field label="Get Jira API issueTable.table" />
+      <Field label="Ticket List (JSON with key & summary)">
+        <button
+          type="button"
+          className="toggle-help"
+          onClick={() => setShowHelp((v) => !v)}
+        >
+          {showHelp ? "Hide instructions" : "How to get ticket list"}
+        </button>
+        {showHelp && (
+          <div className="help-box">
+            <p className="help-step">
+              <strong>1. Filter Issues:</strong>
+            </p>
+            <pre className="help-code">
+              {`project = "{project_name}" AND (assignee in ({user_ad}) OR Developer in ({user_ad}) OR cf[11927] in ({user_ad}) OR cf[16812] in ({user_ad}) OR cf[17011] in ({user_ad})) AND (created >= {start_date} AND created <= {end_date} OR updated >= {start_date} AND updated <= {end_date}) ORDER BY created ASC, updated DESC`}
+            </pre>
+            <p className="help-step">
+              <strong>2. Check Network:</strong>{" "}
+              <code>{"API POST {jira_web}/rest/issueNav/1/issueTable"}</code>
+            </p>
+            <p className="help-step">
+              <strong>3. Copy JSON:</strong> response list{" "}
+              <code>issueTable.table</code>
+            </p>
+            {/* <p className="help-step">Example:</p>
+            <pre className="help-code">
+              {`{
+                "key": "EDBS-111111",
+                "summary": "Issue",
+                ...
+            }`}
+            </pre> */}
+          </div>
+        )}
         <textarea
           className="taller"
           value={form.ticketsJson}
           onChange={update("ticketsJson")}
           spellCheck={false}
-          placeholder='[{"key": "EDBS-1", "summary": "..."}]'
+          placeholder='[{"key": "EDBS-111111", "summary": "Issue"}]'
         />
       </Field>
       {ticketError ? <p className="error">{ticketError}</p> : null}

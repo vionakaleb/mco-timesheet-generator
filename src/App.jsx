@@ -179,16 +179,13 @@ export default function App() {
       </div>
 
       <footer className="footer-container">
-        <div className="field-label">© Viona Kaleb</div>
-        <div>
-          <a
-            href="https://viona-kaleb.vercel.app/"
-            className="field-label"
-            target="_blank"
-          >
-            https://viona-kaleb.vercel.app/
-          </a>
-        </div>
+        <a
+          href="https://viona-kaleb.vercel.app/"
+          className="field-label"
+          target="_blank"
+        >
+          <div className="field-label">© Viona Z. A. Kaleb</div>
+        </a>
       </footer>
     </div>
   );
