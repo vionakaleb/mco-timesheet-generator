@@ -26,8 +26,8 @@ export default function ControlPanel({
   const update = (key) => (event) => onChange(key, event.target.value);
 
   return (
-    <section className="panel">
-      <h2 className="panel-title">Details</h2>
+    <section className="panel control">
+      <h2 className="panel-title">Timesheet</h2>
 
       <div className="grid-two">
         <Field label="Employee Name">
@@ -68,7 +68,7 @@ export default function ControlPanel({
       </div>
 
       <div className="grid-two">
-        <Field label="Default Hours">
+        <Field label="Normal Hours">
           <input
             value={form.defaultHours}
             onChange={update("defaultHours")}
@@ -120,40 +120,7 @@ export default function ControlPanel({
         </Field>
       </div>
 
-      <Field label="Custom Logo (image, optional)">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(event) => onLogo(event.target.files?.[0])}
-        />
-        <span className="field-hint">
-          Leave empty to use the default Mandiri MCO logo.
-        </span>
-      </Field>
-      {form.logoImage ? (
-        <div className="sig-preview">
-          <img src={form.logoImage} alt="custom logo" />
-          <button type="button" className="link-btn" onClick={onClearLogo}>
-            Remove
-          </button>
-        </div>
-      ) : null}
-
-      <Field label="Employee Signature (image)">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(event) => onSignature(event.target.files?.[0])}
-        />
-      </Field>
-      {form.signatureImage ? (
-        <div className="sig-preview">
-          <img src={form.signatureImage} alt="employee signature" />
-          <button type="button" className="link-btn" onClick={onClearSignature}>
-            Remove
-          </button>
-        </div>
-      ) : null}
+      <h2 className="panel-title">Activities</h2>
 
       <Field label="General Activities (one per line)">
         <textarea
@@ -207,6 +174,78 @@ export default function ControlPanel({
         />
       </Field>
       {ticketError ? <p className="error">{ticketError}</p> : null}
+
+      <h2 className="panel-title">Overtime</h2>
+
+      <div className="grid-two">
+        <Field label="Unit Kerja (for overtime sheet)">
+          <input
+            value={form.unitKerja}
+            onChange={update("unitKerja")}
+            placeholder="e.g. IT DIGITAL CHANNEL DELIVERY GROUP"
+          />
+        </Field>
+        <Field label="Approver Role (for overtime sheet)">
+          <input
+            value={form.approverRole}
+            onChange={update("approverRole")}
+            placeholder="e.g. Team Leader FE"
+          />
+        </Field>
+      </div>
+
+      <Field label="Weekdays Overtime Description">
+        <input
+          value={form.weekdayOvertimeDesc}
+          onChange={update("weekdayOvertimeDesc")}
+          placeholder="e.g. Tracing & Bugfixing NBDS"
+        />
+      </Field>
+
+      <Field label="Holiday Overtime Description">
+        <input
+          value={form.holidayOvertimeDesc}
+          onChange={update("holidayOvertimeDesc")}
+          placeholder="e.g. Rollout/Activated Weekend NBDS"
+        />
+      </Field>
+
+      <h2 className="panel-title">Logo</h2>
+
+      <Field label="Custom Logo (image, optional)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onLogo(event.target.files?.[0])}
+        />
+        <span className="field-hint">
+          Leave empty to use the default Mandiri MCO logo.
+        </span>
+      </Field>
+      {form.logoImage ? (
+        <div className="sig-preview">
+          <img src={form.logoImage} alt="custom logo" />
+          <button type="button" className="link-btn" onClick={onClearLogo}>
+            Remove
+          </button>
+        </div>
+      ) : null}
+
+      <Field label="Employee Signature (image)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onSignature(event.target.files?.[0])}
+        />
+      </Field>
+      {form.signatureImage ? (
+        <div className="sig-preview">
+          <img src={form.signatureImage} alt="employee signature" />
+          <button type="button" className="link-btn" onClick={onClearSignature}>
+            Remove
+          </button>
+        </div>
+      ) : null}
     </section>
   );
 }

@@ -23,7 +23,7 @@ export default function TimesheetPreview({
   return (
     <section className="panel preview">
       <div className="preview-head">
-        <h2 className="panel-title">Preview</h2>
+        <h2 className="panel-title">Timesheet Preview</h2>
       </div>
 
       <div className="table-scroll">

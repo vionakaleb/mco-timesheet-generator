@@ -24,7 +24,7 @@ npm run preview
 
 ## How to use
 
-1. Fill in name, role, month, year, default hours, and the counter sign name.
+1. Fill in name, role, month, year, normal hours, and the counter sign name.
 2. Edit the general activities (one per line) if needed.
 3. Paste the ticket list as a JSON array. Each item needs a `key` and a `summary`. They become `KEY - summary` rows after the general activities.
 4. Adjust any daily hours directly in the preview. Weekends default to "Weekend".

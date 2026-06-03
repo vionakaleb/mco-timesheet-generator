@@ -8,6 +8,8 @@ import { parseDays, buildDayTypes, buildHours } from "./lib/dayTypes";
 import { exportTimesheet } from "./lib/exportExcel";
 import { exportTimesheetPDF } from "./lib/exportPdf.js";
 import { loadForm, saveForm, defaultPeriod } from "./lib/storage";
+import OvertimePreview from "./components/OvertimePreview.jsx";
+import { exportOvertimePDF } from "./lib/exportOvertimePdf";
 
 const now = new Date();
 
@@ -30,6 +32,10 @@ const initialForm = {
   logoHeight: 0,
   generalActivities: DEFAULT_GENERAL_ACTIVITIES.join("\n"),
   ticketsJson: "",
+  unitKerja: "",
+  approverRole: "",
+  weekdayOvertimeDesc: "Tracing & Bugfixing",
+  holidayOvertimeDesc: "Rollout/Activated Weekend",
 };
 
 function createInitialForm() {
@@ -186,6 +192,34 @@ export default function App() {
     }
   };
 
+  const handleExportOvertimePDF = async () => {
+    setExportError("");
+    try {
+      await exportOvertimePDF({
+        form,
+        calendar,
+        hours,
+        dayTypes,
+        signature: form.signatureImage
+          ? {
+              dataUri: form.signatureImage,
+              width: form.signatureWidth,
+              height: form.signatureHeight,
+            }
+          : null,
+        logo: form.logoImage
+          ? {
+              dataUri: form.logoImage,
+              width: form.logoWidth,
+              height: form.logoHeight,
+            }
+          : null,
+      });
+    } catch (error) {
+      setExportError(error.message);
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -196,19 +230,26 @@ export default function App() {
           </p>
         </div>
         <div className="export-actions">
-          <button
+          {/* <button
             className="export"
             onClick={handleExport}
             disabled={activities.length === 0}
           >
-            ✏️ Export to Excel
-          </button>
+            ✏️ Export Timesheet Excel
+          </button> */}
           <button
             className="export"
             onClick={handleExportPDF}
             disabled={activities.length === 0}
           >
-            📄 Export to PDF
+            📄 Export Timesheet PDF
+          </button>
+          <button
+            className="export"
+            onClick={handleExportOvertimePDF}
+            disabled={activities.length === 0}
+          >
+            🕒 Export Overtime PDF
           </button>
         </div>
       </header>
@@ -225,14 +266,22 @@ export default function App() {
           onClearLogo={clearLogo}
           ticketError={tickets.error}
         />
-        <TimesheetPreview
-          form={form}
-          calendar={calendar}
-          activities={activities}
-          hours={hours}
-          dayTypes={dayTypes}
-          onHourChange={handleHourChange}
-        />
+        <div className="preview-container">
+          <TimesheetPreview
+            form={form}
+            calendar={calendar}
+            activities={activities}
+            hours={hours}
+            dayTypes={dayTypes}
+            onHourChange={handleHourChange}
+          />
+          <OvertimePreview
+            form={form}
+            calendar={calendar}
+            hours={hours}
+            dayTypes={dayTypes}
+          />
+        </div>
       </div>
 
       <footer className="footer-container">
