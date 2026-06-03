@@ -23,7 +23,7 @@ body {
 .app {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 28px 32px;
+  padding: 28px;
 }
 
 .footer-container {
@@ -81,12 +81,6 @@ body {
   grid-template-columns: 360px 1fr;
   gap: 24px;
   align-items: start;
-}
-
-@media (max-width: 980px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 .panel {
@@ -198,6 +192,7 @@ textarea.taller {
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
+  padding: 4px;
 }
 
 table.sheet {
@@ -419,4 +414,52 @@ input[type="file"] {
   height: 14px;
   border: 1px solid #333;
   display: inline-block;
+}
+
+/* --- Responsive Media Queries --- */
+
+/* Tablets and smaller screens */
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 600px) {
+  .app {
+    padding: 16px;
+  }
+
+  .app-header {
+    align-items: flex-start;
+  }
+
+  .app-header h1 {
+    font-size: 20px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .export {
+    padding: 10px 14px;
+    font-size: 13px;
+    white-space: nowrap; /* Prevents button text from breaking to a new line */
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  /* Override the multi-column grids to stack vertically */
+  .grid-two,
+  .grid-three {
+    display: block;
+  }
+
+  /* .field already has a margin-bottom, so stacking them perfectly creates the needed spacing */
+
+  .sig-preview img {
+    max-width: 140px; /* Slight scale down on tiny screens */
+  }
 }
