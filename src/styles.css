@@ -88,6 +88,7 @@ body {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 20px;
+  overflow-x: auto;
 }
 
 .panel-title {
