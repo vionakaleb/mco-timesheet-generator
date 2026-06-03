@@ -44,7 +44,7 @@ export default function ControlPanel({
         </Field>
       </div>
 
-      <div className="grid-three">
+      <div className="grid-two">
         <Field label="Month">
           <select value={form.month} onChange={update("month")}>
             {MONTHS.map((m) => (
@@ -63,11 +63,23 @@ export default function ControlPanel({
             onChange={update("year")}
           />
         </Field>
+      </div>
+
+      <div className="grid-two">
         <Field label="Default Hours">
           <input
             value={form.defaultHours}
             onChange={update("defaultHours")}
             placeholder="e.g. 9"
+          />
+        </Field>
+        <Field label="Limit Rows">
+          <input
+            type="number"
+            min="1"
+            value={form.limitRows}
+            onChange={update("limitRows")}
+            placeholder="e.g. 20"
           />
         </Field>
       </div>

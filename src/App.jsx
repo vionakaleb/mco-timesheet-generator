@@ -15,6 +15,7 @@ const initialForm = {
   role: "Software Engineer",
   month: now.getMonth() + 1,
   year: now.getFullYear(),
+  limitRows: 20,
   defaultHours: "9",
   departmentHead: "",
   counterSign: "",
@@ -68,10 +69,13 @@ export default function App() {
     [form.generalActivities],
   );
 
-  const activities = useMemo(
-    () => [...generalList, ...tickets.items],
-    [generalList, tickets.items],
-  );
+  const activities = useMemo(() => {
+    const combined = [...generalList, ...tickets.items];
+    const limit = Number(form.limitRows) || 20;
+
+    // If the total is over the limit, slice it
+    return combined.length > limit ? combined.slice(0, limit) : combined;
+  }, [generalList, tickets.items, form.limitRows]);
 
   useEffect(() => {
     setHours(buildHours(calendar, form.defaultHours, dayTypes));
