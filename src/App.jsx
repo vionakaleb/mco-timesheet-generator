@@ -6,6 +6,7 @@ import { parseTickets } from "./lib/parseTickets";
 import { DEFAULT_GENERAL_ACTIVITIES } from "./lib/defaults";
 import { parseDays, buildDayTypes, buildHours } from "./lib/dayTypes";
 import { exportTimesheet } from "./lib/exportExcel";
+import { exportTimesheetPDF } from "./lib/exportPdf.js";
 import { loadForm, saveForm, defaultPeriod } from "./lib/storage";
 
 const now = new Date();
@@ -117,28 +118,39 @@ export default function App() {
       signatureHeight: 0,
     }));
 
+  const buildExportPayload = () => ({
+    role: form.role,
+    name: form.name,
+    month,
+    year,
+    departmentHead: form.departmentHead,
+    counterSign: form.counterSign,
+    calendar,
+    activities,
+    hours,
+    dayTypes,
+    signature: form.signatureImage
+      ? {
+          dataUri: form.signatureImage,
+          width: form.signatureWidth,
+          height: form.signatureHeight,
+        }
+      : null,
+  });
+
   const handleExport = async () => {
     setExportError("");
     try {
-      await exportTimesheet({
-        role: form.role,
-        name: form.name,
-        month,
-        year,
-        departmentHead: form.departmentHead,
-        counterSign: form.counterSign,
-        calendar,
-        activities,
-        hours,
-        dayTypes,
-        signature: form.signatureImage
-          ? {
-              dataUri: form.signatureImage,
-              width: form.signatureWidth,
-              height: form.signatureHeight,
-            }
-          : null,
-      });
+      await exportTimesheet(buildExportPayload());
+    } catch (error) {
+      setExportError(error.message);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    setExportError("");
+    try {
+      await exportTimesheetPDF(buildExportPayload());
     } catch (error) {
       setExportError(error.message);
     }
@@ -153,13 +165,22 @@ export default function App() {
             {activities.length} activities · {calendar.length} days
           </p>
         </div>
-        <button
-          className="export"
-          onClick={handleExport}
-          disabled={activities.length === 0}
-        >
-          Export to Excel
-        </button>
+        <div className="export-actions">
+          <button
+            className="export"
+            onClick={handleExport}
+            disabled={activities.length === 0}
+          >
+            ✏️ Export to Excel
+          </button>
+          <button
+            className="export"
+            onClick={handleExportPDF}
+            disabled={activities.length === 0}
+          >
+            📄 Export to PDF
+          </button>
+        </div>
       </header>
 
       {exportError ? <p className="error banner">{exportError}</p> : null}

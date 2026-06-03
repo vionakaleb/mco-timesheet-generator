@@ -417,6 +417,11 @@ input[type="file"] {
   display: inline-block;
 }
 
+.export-actions {
+  display: flex;
+  gap: 8px;
+}
+
 /* --- Responsive Media Queries --- */
 
 /* Tablets and smaller screens */

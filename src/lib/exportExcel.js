@@ -92,6 +92,14 @@ function signatureExtension(dataUri) {
 
 function buildLegendSheet(wb) {
   const legend = wb.addWorksheet("Legend");
+  legend.pageSetup = {
+    orientation: "landscape",
+    paperSize: 9,
+    fitToPage: true,
+    fitToWidth: 1,
+    fitToHeight: 1,
+  };
+
   paintMerged(legend, 0, 0, 0, 1, "Legend:", FONT_BOLD, CENTER);
   LEGEND_TYPES.forEach((type, i) => {
     paint(legend, 1 + i, 0, "", FONT, CENTER, TYPE_HEX[type]);
@@ -156,6 +164,22 @@ export async function exportTimesheet({
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet(monthLabel(month));
   ws.views = [{ showGridLines: false }];
+  ws.pageSetup = {
+    orientation: "landscape",
+    paperSize: 9,
+    fitToPage: true,
+    fitToWidth: 1,
+    fitToHeight: 1,
+    horizontalCentered: true,
+    margins: {
+      left: 0.3,
+      right: 0.3,
+      top: 0.4,
+      bottom: 0.4,
+      header: 0.2,
+      footer: 0.2,
+    },
+  };
 
   const dayCount = calendar.length;
   const dayStart = 2;
@@ -353,7 +377,7 @@ export async function exportTimesheet({
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `Timesheet_${monthLabel(month)}_${year}.xlsx`;
+  link.download = `Timesheet MCO - ${name} - ${monthLabel(month)} ${year}.xlsx`;
   link.click();
   URL.revokeObjectURL(url);
 }
