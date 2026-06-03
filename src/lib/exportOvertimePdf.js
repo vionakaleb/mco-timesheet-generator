@@ -2,19 +2,15 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { monthLabel } from "./calendar";
 import { buildOvertimeRows, describeOvertime } from "./overtime";
-import {
-  LOGO_BASE64,
-  LOGO_EXTENSION,
-  LOGO_WIDTH,
-  LOGO_HEIGHT,
-} from "../assets/logo";
-import { resolveLogo } from "./exportPdf";
+import { LOGO_EXTENSION, LOGO_OVERTIME_BASE64 } from "../assets/logo";
 
 const PAGE_MARGIN = 40;
 const FONT_FAMILY = "helvetica";
 const TEXT_COLOR = [51, 51, 51];
 const BORDER_COLOR = [51, 51, 51];
 const LOGO_HEIGHT_PT = 40;
+const LOGO_WIDTH = 274;
+const LOGO_HEIGHT = 110;
 
 const INTRO_TEXT =
   "Sehubung dengan adanya tugas pekerjaan dan/atau kegiatan kedinasan yang tidak dapat ditunda/ditangguhkan, sehingga membutuhkan penyelesaian dengan segera dengan ini, kami memerintahkan kepada pegawai yang tercantum dalam daftar dibawah ini yang menyelesaikan kerja lembur.";
@@ -25,6 +21,23 @@ function dataUriExtension(dataUri) {
   if (subtype === "jpeg" || subtype === "jpg") return "JPEG";
   if (subtype === "gif") return "GIF";
   return "PNG";
+}
+
+function resolveLogo(customLogo) {
+  if (customLogo && customLogo.dataUri) {
+    return {
+      source: customLogo.dataUri,
+      format: dataUriExtension(customLogo.dataUri),
+      width: customLogo.width || LOGO_WIDTH,
+      height: customLogo.height || LOGO_HEIGHT,
+    };
+  }
+  return {
+    source: `data:image/${LOGO_EXTENSION};base64,${LOGO_OVERTIME_BASE64}`,
+    format: LOGO_EXTENSION.toUpperCase(),
+    width: LOGO_WIDTH,
+    height: LOGO_HEIGHT,
+  };
 }
 
 function drawLogo(doc, customLogo, pageWidth) {
@@ -181,7 +194,7 @@ export async function exportOvertimePDF({
 
   if (rows.length === 0) {
     throw new Error(
-      "No overtime hours detected. Weekdays must be more than Normal Hours. Weekends or Cuti Bersama more than 0 hours",
+      "No overtime hours detected. Weekdays must be more than Normal Hours (e.g. 9). Weekends / Cuti Bersama more than 0 Hours",
     );
   }
 

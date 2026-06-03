@@ -1,7 +1,33 @@
-import { monthLabel } from "./calendar";
-
 const WEEKDAY_TIME = "18.00–21.00";
 const HOLIDAY_TIME = "09.00–15.00";
+
+const DAY_NAMES_ID = [
+  "Minggu",
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu",
+];
+const MONTH_LABELS_ID = [
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember",
+];
+
+function monthLabel(month) {
+  return MONTH_LABELS_ID[month - 1] ?? "";
+}
 
 function isHoliday(dayType) {
   return dayType === "weekend" || dayType === "cutiBersama";
@@ -10,6 +36,11 @@ function isHoliday(dayType) {
 function toNumber(value) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatDate(day, month, year) {
+  const dayName = DAY_NAMES_ID[new Date(year, month - 1, day).getDay()];
+  return `${dayName}, ${day} ${monthLabel(month)} ${year}`;
 }
 
 export function buildOvertimeRows({
@@ -54,10 +85,6 @@ export function buildOvertimeRows({
   });
 
   return rows;
-}
-
-function formatDate(day, month, year) {
-  return `${day} ${monthLabel(month)} ${year}`;
 }
 
 export function describeOvertime(row, weekdayDesc, holidayDesc) {

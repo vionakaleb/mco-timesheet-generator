@@ -44,7 +44,7 @@ function dataUriExtension(dataUri) {
   return "PNG";
 }
 
-export function resolveLogo(customLogo) {
+function resolveLogo(customLogo) {
   if (customLogo && customLogo.dataUri) {
     return {
       source: customLogo.dataUri,

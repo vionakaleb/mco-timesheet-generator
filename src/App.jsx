@@ -32,9 +32,9 @@ const initialForm = {
   logoHeight: 0,
   generalActivities: DEFAULT_GENERAL_ACTIVITIES.join("\n"),
   ticketsJson: "",
-  unitKerja: "",
+  unitKerja: "IT DIGITAL CHANNEL DELIVERY GROUP",
   approverRole: "",
-  weekdayOvertimeDesc: "Tracing & Bugfixing",
+  weekdayOvertimeDesc: "Support Development & Bugfixing",
   holidayOvertimeDesc: "Rollout/Activated Weekend",
 };
 

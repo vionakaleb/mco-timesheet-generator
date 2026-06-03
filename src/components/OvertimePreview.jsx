@@ -19,7 +19,7 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
         <span className="subtitle">{totalDays} overtime day(s)</span>
       </div>
 
-      <div className="overtime-intro">
+      {/* <div className="overtime-intro">
         <p>
           Sehubung dengan adanya tugas pekerjaan dan/atau kegiatan kedinasan
           yang tidak dapat ditunda/ditangguhkan, sehingga membutuhkan
@@ -27,7 +27,7 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
           pegawai yang tercantum dalam daftar dibawah ini yang menyelesaikan
           kerja lembur.
         </p>
-      </div>
+      </div> */}
 
       <div className="table-scroll">
         <table className="sheet overtime-table">
@@ -45,16 +45,16 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={6} className="empty">
-                  No overtime hours detected. Add hours beyond{" "}
-                  {form.defaultHours}h on weekdays or any hours on weekends/Cuti
-                  Bersama.
+                  No overtime hours detected. Weekdays must be more than{" "}
+                  {form.defaultHours} Hours. Weekends / Cuti Bersama more than 0
+                  hours.
                 </td>
               </tr>
             ) : (
               rows.map((row, i) => (
                 <tr key={row.day}>
                   {i === 0 && <td rowSpan={rows.length}>{form.name}</td>}
-                  <td>{row.date}</td>
+                  <td style={{ textAlign: "left" }}>{row.date}</td>
                   {i === 0 && <td rowSpan={rows.length}>{form.unitKerja}</td>}
                   <td>{row.time}</td>
                   <td>{row.totalHours} Jam</td>

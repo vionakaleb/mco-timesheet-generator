@@ -178,14 +178,14 @@ export default function ControlPanel({
       <h2 className="panel-title">Overtime</h2>
 
       <div className="grid-two">
-        <Field label="Unit Kerja (for overtime sheet)">
+        <Field label="Unit Kerja">
           <input
             value={form.unitKerja}
             onChange={update("unitKerja")}
             placeholder="e.g. IT DIGITAL CHANNEL DELIVERY GROUP"
           />
         </Field>
-        <Field label="Approver Role (for overtime sheet)">
+        <Field label="Approver Role">
           <input
             value={form.approverRole}
             onChange={update("approverRole")}
@@ -210,7 +210,23 @@ export default function ControlPanel({
         />
       </Field>
 
-      <h2 className="panel-title">Logo</h2>
+      <h2 className="panel-title">Images</h2>
+
+      <Field label="Employee Signature (image)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onSignature(event.target.files?.[0])}
+        />
+      </Field>
+      {form.signatureImage ? (
+        <div className="sig-preview">
+          <img src={form.signatureImage} alt="employee signature" />
+          <button type="button" className="link-btn" onClick={onClearSignature}>
+            Remove
+          </button>
+        </div>
+      ) : null}
 
       <Field label="Custom Logo (image, optional)">
         <input
@@ -226,22 +242,6 @@ export default function ControlPanel({
         <div className="sig-preview">
           <img src={form.logoImage} alt="custom logo" />
           <button type="button" className="link-btn" onClick={onClearLogo}>
-            Remove
-          </button>
-        </div>
-      ) : null}
-
-      <Field label="Employee Signature (image)">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(event) => onSignature(event.target.files?.[0])}
-        />
-      </Field>
-      {form.signatureImage ? (
-        <div className="sig-preview">
-          <img src={form.signatureImage} alt="employee signature" />
-          <button type="button" className="link-btn" onClick={onClearSignature}>
             Remove
           </button>
         </div>
