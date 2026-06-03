@@ -197,7 +197,6 @@ textarea.taller {
 .table-scroll {
   overflow-x: auto;
   border: 1px solid var(--line);
-  border-radius: 8px;
 }
 
 table.sheet {
@@ -230,6 +229,7 @@ table.sheet .logo-row td {
 }
 
 table.sheet .logo-cell {
+  border: none !important;
   text-align: left;
   vertical-align: middle;
   padding: 10px 14px;

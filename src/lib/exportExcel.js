@@ -19,16 +19,19 @@ const FONT_BOLD = { name: "IBM Plex Sans", size: 10, bold: true };
 const CENTER = { vertical: "middle", horizontal: "center", wrapText: true };
 const LEFT = { vertical: "middle", horizontal: "left", wrapText: true };
 
-const LOGO_SPAN = 7;
 const LOGO_BAND_ROWS = 3;
 const LOGO_PIXEL_HEIGHT = 60;
+
+const ROLE_COL_WIDTH = 12;
+const IDVALUE_ROW_PT = 36;
+const DAY_COL_PX = 36;
 
 const DESC_COL_WIDTH = 58;
 const DESC_CHARS_PER_LINE = Math.round(DESC_COL_WIDTH * 1.1);
 const DESC_MAX_LINES = 2;
 
-const SIGNATURE_MAX_WIDTH = 170;
-const SIGNATURE_MAX_HEIGHT = 30;
+const SIGNATURE_MAX_WIDTH = 150;
+const SIGNATURE_MAX_HEIGHT = 40;
 
 function paint(ws, row, col, value, font, align, fillHex) {
   const cell = ws.getCell(row + 1, col + 1);
@@ -87,6 +90,49 @@ function signatureExtension(dataUri) {
   return "png";
 }
 
+function buildLegendSheet(wb) {
+  const legend = wb.addWorksheet("Legend");
+  paintMerged(legend, 0, 0, 0, 1, "Legend:", FONT_BOLD, CENTER);
+  LEGEND_TYPES.forEach((type, i) => {
+    paint(legend, 1 + i, 0, "", FONT, CENTER, TYPE_HEX[type]);
+    paint(legend, 1 + i, 1, TYPE_LABEL[type], FONT, LEFT);
+  });
+  legend.getColumn(1).width = 10;
+  legend.getColumn(2).width = 18;
+  for (let r = 0; r <= LEGEND_TYPES.length; r += 1)
+    legend.getRow(r + 1).height = 20;
+}
+
+function addSignature(ws, wb, signature, range, rowIndex) {
+  const natW = signature.width || SIGNATURE_MAX_WIDTH;
+  const natH = signature.height || SIGNATURE_MAX_HEIGHT;
+  const scale = Math.min(
+    SIGNATURE_MAX_WIDTH / natW,
+    SIGNATURE_MAX_HEIGHT / natH,
+    1,
+  );
+  const imgW = Math.round(natW * scale);
+  const imgH = Math.round(natH * scale);
+
+  const rowPx = Math.round((IDVALUE_ROW_PT * 4) / 3);
+  const cellWidthPx = range.span * DAY_COL_PX;
+  const offsetX = Math.max((cellWidthPx - imgW) / 2, 0);
+  const offsetY = Math.max((rowPx - imgH) / 2, 0);
+  const colsIn = Math.floor(offsetX / DAY_COL_PX);
+
+  const imageId = wb.addImage({
+    base64: signature.dataUri.split(",")[1],
+    extension: signatureExtension(signature.dataUri),
+  });
+  ws.addImage(imageId, {
+    tl: {
+      col: range.start + colsIn + (offsetX - colsIn * DAY_COL_PX) / DAY_COL_PX,
+      row: rowIndex + offsetY / rowPx,
+    },
+    ext: { width: imgW, height: imgH },
+  });
+}
+
 export async function exportTimesheet({
   role,
   name,
@@ -109,6 +155,7 @@ export async function exportTimesheet({
 
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet(monthLabel(month));
+  ws.views = [{ showGridLines: false }];
 
   const dayCount = calendar.length;
   const dayStart = 2;
@@ -125,13 +172,6 @@ export async function exportTimesheet({
   const firstActivity = weekdayRow + 1;
   const lastActivity = firstActivity + activities.length - 1;
   const totalRow = lastActivity + 1;
-
-  paintMerged(ws, 0, 0, LOGO_BAND_ROWS - 1, LOGO_SPAN - 1, "", FONT, CENTER);
-  for (let r = 0; r < LOGO_BAND_ROWS; r += 1) {
-    for (let c = LOGO_SPAN; c <= signCol; c += 1) {
-      paint(ws, r, c, "", FONT, CENTER);
-    }
-  }
 
   const group = (range, row, value, font) =>
     paintMerged(ws, row, range.start, row, range.end, value, font, CENTER);
@@ -275,15 +315,7 @@ export async function exportTimesheet({
   paint(ws, totalRow, counterCol, "", FONT, CENTER);
   paint(ws, totalRow, signCol, "", FONT, CENTER);
 
-  const legendRow = totalRow + 2;
-  paintMerged(ws, legendRow, 0, legendRow, 1, "Legend:", FONT_BOLD, CENTER);
-  LEGEND_TYPES.forEach((type, i) => {
-    const r = legendRow + 1 + i;
-    paint(ws, r, 0, "", FONT, CENTER, TYPE_HEX[type]);
-    paint(ws, r, 1, TYPE_LABEL[type], FONT, LEFT);
-  });
-
-  ws.getColumn(1).width = 6;
+  ws.getColumn(1).width = ROLE_COL_WIDTH;
   ws.getColumn(2).width = DESC_COL_WIDTH;
   for (let i = 0; i < dayCount; i += 1)
     ws.getColumn(dayStart + i + 1).width = 5;
@@ -293,7 +325,7 @@ export async function exportTimesheet({
 
   for (let r = 0; r < LOGO_BAND_ROWS; r += 1) ws.getRow(r + 1).height = 22;
   ws.getRow(idLabelRow + 1).height = 20;
-  ws.getRow(idValueRow + 1).height = 30;
+  ws.getRow(idValueRow + 1).height = IDVALUE_ROW_PT;
   ws.getRow(spacerRow + 1).height = 8;
   for (let r = firstActivity; r <= lastActivity; r += 1)
     ws.getRow(r + 1).height = 30;
@@ -309,25 +341,10 @@ export async function exportTimesheet({
   });
 
   if (signature && signature.dataUri) {
-    const natW = signature.width || SIGNATURE_MAX_WIDTH;
-    const natH = signature.height || SIGNATURE_MAX_HEIGHT;
-    const scale = Math.min(
-      SIGNATURE_MAX_WIDTH / natW,
-      SIGNATURE_MAX_HEIGHT / natH,
-      1,
-    );
-    const sigId = wb.addImage({
-      base64: signature.dataUri.split(",")[1],
-      extension: signatureExtension(signature.dataUri),
-    });
-    ws.addImage(sigId, {
-      tl: { col: ids.empSignature.start + 0.15, row: idValueRow + 0.1 },
-      ext: {
-        width: Math.round(natW * scale),
-        height: Math.round(natH * scale),
-      },
-    });
+    addSignature(ws, wb, signature, ids.empSignature, idValueRow);
   }
+
+  buildLegendSheet(wb);
 
   const buffer = await wb.xlsx.writeBuffer();
   const blob = new Blob([buffer], {

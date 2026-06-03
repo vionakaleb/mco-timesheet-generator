@@ -37,12 +37,6 @@ export default function TimesheetPreview({
                   className="logo-img"
                 />
               </td>
-              {/* {Array.from(
-                { length: Math.max(totalColumns - LOGO_SPAN, 0) },
-                (_, i) => (
-                  <td key={`logo-pad-${i}`} />
-                ),
-              )} */}
             </tr>
             <tr className="identity">
               <th colSpan={ids.role}>Role</th>
