@@ -166,7 +166,7 @@ export default function ControlPanel({
           </div>
         )}
         <textarea
-          className="taller"
+          className="tall"
           value={form.ticketsJson}
           onChange={update("ticketsJson")}
           spellCheck={false}
