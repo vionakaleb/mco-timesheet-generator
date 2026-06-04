@@ -118,7 +118,7 @@ function drawFooter(doc, pageWidth, startY, form, signature) {
   doc.text(`Role  : ${form.role || "-"}`, leftX, namesY + 14);
 
   doc.text(`Nama : ${form.counterSign || "-"}`, rightX, namesY);
-  doc.text(`Role  : Lead ${form.role || "-"}`, rightX, namesY + 14);
+  doc.text(`Role  : ${form.approverRole || "-"}`, rightX, namesY + 14);
 }
 
 function buildTableBody(rows, form) {
@@ -194,7 +194,7 @@ export async function exportOvertimePDF({
 
   if (rows.length === 0) {
     throw new Error(
-      "No overtime hours detected. Weekdays must be more than Normal Hours (e.g. 9). Weekends / Cuti Bersama more than 0 Hours",
+      "No overtime hours detected. Weekdays must be more than Normal Hours (e.g. 9). For Weekends / Cuti Bersama must be more than 0 Hours",
     );
   }
 

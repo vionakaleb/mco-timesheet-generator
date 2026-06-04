@@ -194,7 +194,7 @@ export default function ControlPanel({
         </Field>
       </div>
 
-      <Field label="Weekdays Overtime Description">
+      <Field label="Weekdays Description">
         <input
           value={form.weekdayOvertimeDesc}
           onChange={update("weekdayOvertimeDesc")}
@@ -202,7 +202,7 @@ export default function ControlPanel({
         />
       </Field>
 
-      <Field label="Holiday Overtime Description">
+      <Field label="Holiday Description">
         <input
           value={form.holidayOvertimeDesc}
           onChange={update("holidayOvertimeDesc")}
@@ -235,7 +235,7 @@ export default function ControlPanel({
           onChange={(event) => onLogo(event.target.files?.[0])}
         />
         <span className="field-hint">
-          Default is Mandiri MCO, replace if you are from other company.
+          Default Mandiri MCO, replace if you are from other company.
         </span>
       </Field>
       {form.logoImage ? (
