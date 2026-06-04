@@ -398,7 +398,7 @@ export async function exportTimesheet({
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `Timesheet MCO - ${name} - ${monthLabel(month)} ${year}.xlsx`;
+  link.download = `Timesheet - ${name} - ${monthLabel(month)} ${year}.xlsx`;
   link.click();
   URL.revokeObjectURL(url);
 }

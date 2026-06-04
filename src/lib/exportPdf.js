@@ -389,5 +389,5 @@ export async function exportTimesheetPDF({
     drawLegend(doc, legendY, pageWidth);
   }
 
-  doc.save(`Timesheet MCO - ${name} - ${monthLabel(month)} ${year}.pdf`);
+  doc.save(`Timesheet - ${name} - ${monthLabel(month)} ${year}.pdf`);
 }

@@ -264,6 +264,6 @@ export async function exportOvertimePDF({
   drawFooter(doc, pageWidth, footerStartY, form, signature);
 
   doc.save(
-    `Overtime MCO - ${form.name} - ${monthLabel(Number(form.month))} ${form.year}.pdf`,
+    `Overtime - ${form.name} - ${monthLabel(Number(form.month))} ${form.year}.pdf`,
   );
 }

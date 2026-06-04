@@ -131,7 +131,7 @@ export default function ControlPanel({
         />
       </Field>
 
-      <Field label="Ticket List (JSON with key & summary)">
+      <Field label="Jira Ticket List (JSON)">
         <button
           type="button"
           className="toggle-help"
@@ -235,7 +235,7 @@ export default function ControlPanel({
           onChange={(event) => onLogo(event.target.files?.[0])}
         />
         <span className="field-hint">
-          Leave empty to use the default Mandiri MCO logo.
+          Default is Mandiri MCO, replace if you are from other company.
         </span>
       </Field>
       {form.logoImage ? (
