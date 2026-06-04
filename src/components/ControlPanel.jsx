@@ -120,43 +120,6 @@ export default function ControlPanel({
         </Field>
       </div>
 
-      <h2 className="panel-title">Images</h2>
-
-      <Field label="Employee Signature">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(event) => onSignature(event.target.files?.[0])}
-        />
-      </Field>
-      {form.signatureImage ? (
-        <div className="sig-preview">
-          <img src={form.signatureImage} alt="employee signature" />
-          <button type="button" className="link-btn" onClick={onClearSignature}>
-            Remove
-          </button>
-        </div>
-      ) : null}
-
-      <Field label="Timesheet Logo (optional)">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(event) => onLogo(event.target.files?.[0])}
-        />
-        <span className="field-hint">
-          Default Mandiri MCO, replace if you are from other company.
-        </span>
-      </Field>
-      {form.logoImage ? (
-        <div className="sig-preview">
-          <img src={form.logoImage} alt="custom logo" />
-          <button type="button" className="link-btn" onClick={onClearLogo}>
-            Remove
-          </button>
-        </div>
-      ) : null}
-
       <h2 className="panel-title">Activities</h2>
 
       <Field label="General Activities (one per line)">
@@ -211,6 +174,43 @@ export default function ControlPanel({
         />
       </Field>
       {ticketError ? <p className="error">{ticketError}</p> : null}
+
+      <h2 className="panel-title">Images</h2>
+
+      <Field label="Employee Signature">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onSignature(event.target.files?.[0])}
+        />
+      </Field>
+      {form.signatureImage ? (
+        <div className="sig-preview">
+          <img src={form.signatureImage} alt="employee signature" />
+          <button type="button" className="link-btn" onClick={onClearSignature}>
+            Remove
+          </button>
+        </div>
+      ) : null}
+
+      <Field label="Timesheet Logo (optional)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onLogo(event.target.files?.[0])}
+        />
+        <span className="field-hint">
+          Default Mandiri MCO, replace if you are from other company.
+        </span>
+      </Field>
+      {form.logoImage ? (
+        <div className="sig-preview">
+          <img src={form.logoImage} alt="custom logo" />
+          <button type="button" className="link-btn" onClick={onClearLogo}>
+            Remove
+          </button>
+        </div>
+      ) : null}
 
       <h2 className="panel-title">Overtime</h2>
 
