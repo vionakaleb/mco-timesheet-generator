@@ -212,7 +212,7 @@ export default function ControlPanel({
 
       <h2 className="panel-title">Images</h2>
 
-      <Field label="Employee Signature (image)">
+      <Field label="Employee Signature">
         <input
           type="file"
           accept="image/*"
@@ -228,7 +228,7 @@ export default function ControlPanel({
         </div>
       ) : null}
 
-      <Field label="Custom Logo (image, optional)">
+      <Field label="Timesheet Logo (optional)">
         <input
           type="file"
           accept="image/*"
