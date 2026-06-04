@@ -1,6 +1,46 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-8WLQ77FSJP"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-8WLQ77FSJP");
+    </script>
+
+    <title>MCO Timesheet Generator</title>
+    <meta
+      name="description"
+      content="Generate your Timesheet and Overtime PDF with this app."
+    />
+    <meta
+      name="keywords"
+      content="generate, timesheet, overtime, sheet, pdf, corporate, company, office"
+    />
+
+    <meta property="og:title" content="MCO Timesheet Generator" />
+    <meta
+      property="og:description"
+      content="Generate your Timesheet and Overtime PDF with this app."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mco-timesheet.netlify.app/" />
+    <meta
+      property="og:image"
+      content="https://membership.mandirimco.co.id/img/logomcoweb.png"
+    />
+
+    <link rel="canonical" href="https://mco-timesheet.netlify.app/" />
+    <meta name="robots" content="index, follow" />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -9,8 +49,8 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>MCO Timesheet Generator</title>
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

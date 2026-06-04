@@ -1,5 +1,5 @@
-const WEEKDAY_TIME = "18.00–21.00";
-const HOLIDAY_TIME = "09.00–15.00";
+const WEEKDAY_START_HOUR = 18;
+const HOLIDAY_START_HOUR = 9;
 
 const DAY_NAMES_ID = [
   "Minggu",
@@ -38,6 +38,16 @@ function toNumber(value) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function formatHour(hour) {
+  const normalized = ((hour % 24) + 24) % 24;
+  return `${String(normalized).padStart(2, "0")}.00`;
+}
+
+function buildTimeRange(startHour, totalHours) {
+  const endHour = startHour + totalHours;
+  return `${formatHour(startHour)}–${formatHour(endHour)}`;
+}
+
 function formatDate(day, month, year) {
   const dayName = DAY_NAMES_ID[new Date(year, month - 1, day).getDay()];
   return `${dayName}, ${day} ${monthLabel(month)} ${year}`;
@@ -64,7 +74,7 @@ export function buildOvertimeRows({
       rows.push({
         day: entry.day,
         date: formatDate(entry.day, month, year),
-        time: HOLIDAY_TIME,
+        time: buildTimeRange(HOLIDAY_START_HOUR, loggedHours),
         totalHours: loggedHours,
         isHoliday: true,
       });
@@ -74,11 +84,12 @@ export function buildOvertimeRows({
     if (dayType === "cutiPribadi") return;
 
     if (loggedHours > threshold) {
+      const overtimeHours = loggedHours - threshold;
       rows.push({
         day: entry.day,
         date: formatDate(entry.day, month, year),
-        time: WEEKDAY_TIME,
-        totalHours: loggedHours - threshold,
+        time: buildTimeRange(WEEKDAY_START_HOUR, overtimeHours),
+        totalHours: overtimeHours,
         isHoliday: false,
       });
     }
