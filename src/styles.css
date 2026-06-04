@@ -383,6 +383,7 @@ input[type="file"] {
   border-radius: 8px;
   font-size: 12.5px;
   line-height: 1.55;
+  width: 318px;
 }
 
 .help-step {
