@@ -46,8 +46,7 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
               <tr>
                 <td colSpan={6} className="empty">
                   No overtime hours detected. Weekdays must be more than{" "}
-                  {form.defaultHours} Hours. Weekends / Cuti Bersama more than 0
-                  hours.
+                  {form.defaultHours} Hours. Holidays must be more than 0 hours.
                 </td>
               </tr>
             ) : (

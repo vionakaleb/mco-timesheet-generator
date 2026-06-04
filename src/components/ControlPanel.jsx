@@ -202,7 +202,7 @@ export default function ControlPanel({
         />
       </Field>
 
-      <Field label="Holiday Description">
+      <Field label="Holidays Description">
         <input
           value={form.holidayOvertimeDesc}
           onChange={update("holidayOvertimeDesc")}

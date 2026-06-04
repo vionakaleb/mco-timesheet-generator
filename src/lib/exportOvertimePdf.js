@@ -194,7 +194,7 @@ export async function exportOvertimePDF({
 
   if (rows.length === 0) {
     throw new Error(
-      "No overtime hours detected. Weekdays must be more than Normal Hours (e.g. 9). For Weekends / Cuti Bersama must be more than 0 Hours",
+      "No overtime hours detected. Weekdays must be more than Normal Hours (e.g. 9). For Holidays must be more than 0 Hours",
     );
   }
 
