@@ -308,7 +308,7 @@ export default function App() {
 
       <footer className="footer-container">
         <a
-          href="https://viona-kaleb.vercel.app/"
+          href="https://viona-kaleb.netlify.app/"
           className="field-label"
           target="_blank"
         >

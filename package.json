@@ -1,7 +1,7 @@
 {
   "name": "timesheet-generator",
   "homepage": "https://mco-timesheet.netlify.app/",
-  "author": "Viona Kaleb <vionakaleb@gmail.com>(https://viona-kaleb.vercel.app/)",
+  "author": "Viona Kaleb <vionakaleb@gmail.com>(https://viona-kaleb.netlify.app/)",
   "private": true,
   "version": "1.0.0",
   "type": "module",
