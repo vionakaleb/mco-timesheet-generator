@@ -1,8 +1,4 @@
-import {
-  buildOvertimeRows,
-  describeOvertime,
-  parseDateList,
-} from "../lib/overtime";
+import { buildOvertimeRows, describeOvertime } from "../lib/overtime";
 import { LOGO_EXTENSION, LOGO_OVERTIME_BASE64 } from "../assets/logo";
 
 const DEFAULT_LOGO = `data:image/${LOGO_EXTENSION};base64,${LOGO_OVERTIME_BASE64}`;
