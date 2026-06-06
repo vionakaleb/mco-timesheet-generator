@@ -247,19 +247,25 @@ export async function exportOvertimePDF({
       halign: "center",
     },
     columnStyles: {
-      0: { cellWidth: 70 },
-      1: { cellWidth: 80 },
-      2: { cellWidth: 80 },
-      3: { cellWidth: 75 },
-      4: { cellWidth: 55 },
+      0: { cellWidth: 65 },
+      1: { cellWidth: 95 },
+      2: { cellWidth: 70 },
+      3: { cellWidth: 70 },
+      4: { cellWidth: 50 },
       5: { cellWidth: "auto", halign: "left" },
     },
   });
 
-  const footerStartY = Math.min(
-    doc.lastAutoTable.finalY + 40,
-    pageHeight - 130,
-  );
+  const FOOTER_HEIGHT = 130;
+  const availableSpace = pageHeight - doc.lastAutoTable.finalY - 40;
+  let footerStartY;
+
+  if (availableSpace >= FOOTER_HEIGHT) {
+    footerStartY = doc.lastAutoTable.finalY + 40;
+  } else {
+    doc.addPage();
+    footerStartY = PAGE_MARGIN;
+  }
 
   drawFooter(doc, pageWidth, footerStartY, form, signature);
 
