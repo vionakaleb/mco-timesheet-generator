@@ -1,4 +1,14 @@
-import { buildOvertimeRows, describeOvertime } from "../lib/overtime";
+import {
+  buildOvertimeRows,
+  describeOvertime,
+  parseDateList,
+} from "../lib/overtime";
+import { LOGO_EXTENSION, LOGO_OVERTIME_BASE64 } from "../assets/logo";
+
+const DEFAULT_LOGO = `data:image/${LOGO_EXTENSION};base64,${LOGO_OVERTIME_BASE64}`;
+
+const INTRO_TEXT =
+  "Sehubung dengan adanya tugas pekerjaan dan/atau kegiatan kedinasan yang tidak dapat ditunda/ditangguhkan, sehingga membutuhkan penyelesaian dengan segera dengan ini, kami memerintahkan kepada pegawai yang tercantum dalam daftar dibawah ini yang menyelesaikan kerja lembur.";
 
 export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
   const rows = buildOvertimeRows({
@@ -8,29 +18,29 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
     defaultHours: form.defaultHours,
     month: Number(form.month),
     year: Number(form.year),
+    forcedDates: parseDateList(form.overtimeDates),
+    forcedOvertimeHours: Number(form.overtimeDefaultHours) || 0,
   });
 
   const totalDays = rows.length;
+  const logoSrc = form.overtimeLogoImage || DEFAULT_LOGO;
 
   return (
-    <section className="panel preview">
-      <div className="preview-head">
-        <h2 className="panel-title">Overtime Preview</h2>
-        <span className="subtitle">{totalDays} overtime day(s)</span>
-      </div>
+    <section className="panel preview overtime-preview">
+      <div className="overtime-doc">
+        <div className="overtime-doc-header">
+          <img
+            className="overtime-doc-logo"
+            src={logoSrc}
+            alt="overtime logo"
+          />
+        </div>
 
-      {/* <div className="overtime-intro">
-        <p>
-          Sehubung dengan adanya tugas pekerjaan dan/atau kegiatan kedinasan
-          yang tidak dapat ditunda/ditangguhkan, sehingga membutuhkan
-          penyelesaian dengan segera dengan ini, kami memerintahkan kepada
-          pegawai yang tercantum dalam daftar dibawah ini yang menyelesaikan
-          kerja lembur.
-        </p>
-      </div> */}
+        <h1 className="overtime-doc-title">SURAT PERINTAH KERJA LEMBUR</h1>
 
-      <div className="table-scroll">
-        <table className="sheet overtime-table">
+        <p className="overtime-doc-intro">{INTRO_TEXT}</p>
+
+        <table className="overtime-doc-table">
           <thead>
             <tr>
               <th>Nama</th>
@@ -45,38 +55,71 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={6} className="empty">
-                  No overtime hours detected. Weekdays must be more than{" "}
-                  {form.defaultHours} Hours. Holidays must be more than 0 hours.
+                  No overtime hours detected. Add dates under "Default Overtime
+                  Dates" or set weekday hours above {form.defaultHours}.
                 </td>
               </tr>
             ) : (
-              rows.map((row, i) => (
-                <tr key={row.day}>
-                  {i === 0 && <td rowSpan={rows.length}>{form.name}</td>}
-                  <td style={{ textAlign: "left" }}>{row.date}</td>
-                  {i === 0 && <td rowSpan={rows.length}>{form.unitKerja}</td>}
-                  <td>{row.time}</td>
-                  <td>{row.totalHours} Jam</td>
-                  <td>
-                    {describeOvertime(
-                      row,
-                      form.weekdayOvertimeDesc,
-                      form.holidayOvertimeDesc,
+              <>
+                {rows.map((row, i) => (
+                  <tr key={row.day}>
+                    {i === 0 && (
+                      <td rowSpan={rows.length} className="merged-cell">
+                        {form.name || "-"}
+                      </td>
                     )}
+                    <td>{row.date}</td>
+                    {i === 0 && (
+                      <td rowSpan={rows.length} className="merged-cell">
+                        {form.unitKerja || "-"}
+                      </td>
+                    )}
+                    <td>{row.time}</td>
+                    <td>{row.totalHours} Jam</td>
+                    <td className="job-cell">
+                      {describeOvertime(
+                        row,
+                        form.weekdayOvertimeDesc,
+                        form.holidayOvertimeDesc,
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="total-row">
+                  <td colSpan={4}>
+                    <strong>Total</strong>
+                  </td>
+                  <td colSpan={2}>
+                    <strong>{totalDays} hari</strong>
                   </td>
                 </tr>
-              ))
+              </>
             )}
-            <tr className="total-row">
-              <td colSpan={4} style={{ textAlign: "center" }}>
-                <strong>Total</strong>
-              </td>
-              <td colSpan={2}>
-                <strong>{totalDays} hari</strong>
-              </td>
-            </tr>
           </tbody>
         </table>
+
+        <div className="overtime-doc-footer">
+          <div className="footer-col">
+            <div className="footer-label">Pemohon</div>
+            <div className="footer-sig">
+              {form.signatureImage ? (
+                <img src={form.signatureImage} alt="signature" />
+              ) : null}
+            </div>
+            <div className="footer-name">Nama : {form.name || "-"}</div>
+            <div className="footer-name">
+              Role&nbsp;&nbsp;: {form.role || "-"}
+            </div>
+          </div>
+          <div className="footer-col">
+            <div className="footer-label">Disetujui Oleh</div>
+            <div className="footer-sig"></div>
+            <div className="footer-name">Nama : {form.counterSign || "-"}</div>
+            <div className="footer-name">
+              Role&nbsp;&nbsp;: {form.approverRole || "-"}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

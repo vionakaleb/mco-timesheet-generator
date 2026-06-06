@@ -19,6 +19,8 @@ export default function ControlPanel({
   onClearSignature,
   onLogo,
   onClearLogo,
+  onOvertimeLogo,
+  onClearOvertimeLogo,
   ticketError,
 }) {
   const [showHelp, setShowHelp] = useState(false);
@@ -200,13 +202,36 @@ export default function ControlPanel({
           onChange={(event) => onLogo(event.target.files?.[0])}
         />
         <span className="field-hint">
-          Default Mandiri MCO, replace if you are from other company.
+          Default to Mandiri MCO, replace if you are from other vendor.
         </span>
       </Field>
       {form.logoImage ? (
         <div className="sig-preview">
           <img src={form.logoImage} alt="custom logo" />
           <button type="button" className="link-btn" onClick={onClearLogo}>
+            Remove
+          </button>
+        </div>
+      ) : null}
+
+      <Field label="Overtime Logo (optional)">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(event) => onOvertimeLogo(event.target.files?.[0])}
+        />
+        <span className="field-hint">
+          Default to Mandiri, replace if you are from other company.
+        </span>
+      </Field>
+      {form.overtimeLogoImage ? (
+        <div className="sig-preview">
+          <img src={form.overtimeLogoImage} alt="overtime logo" />
+          <button
+            type="button"
+            className="link-btn"
+            onClick={onClearOvertimeLogo}
+          >
             Remove
           </button>
         </div>
@@ -230,6 +255,25 @@ export default function ControlPanel({
           />
         </Field>
       </div>
+
+      {/* <div className="grid-two">
+        <Field label="Default Overtime Dates">
+          <input
+            value={form.overtimeDates}
+            onChange={update("overtimeDates")}
+            placeholder="e.g. 1, 2, 5-10"
+          />
+        </Field>
+        <Field label="Default Overtime Hours">
+          <input
+            type="number"
+            min="0"
+            value={form.overtimeDefaultHours}
+            onChange={update("overtimeDefaultHours")}
+            placeholder="e.g. 3"
+          />
+        </Field>
+      </div> */}
 
       <Field label="Weekdays Description">
         <input

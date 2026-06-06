@@ -36,6 +36,11 @@ const initialForm = {
   approverRole: "",
   weekdayOvertimeDesc: "Support Development & Bugfixing",
   holidayOvertimeDesc: "Rollout/Activated Weekend",
+  overtimeDates: "",
+  overtimeDefaultHours: "3",
+  overtimeLogoImage: "",
+  overtimeLogoWidth: 0,
+  overtimeLogoHeight: 0,
 };
 
 function createInitialForm() {
@@ -147,6 +152,21 @@ export default function App() {
       logoHeight: 0,
     }));
 
+  const handleOvertimeLogo = (file) =>
+    readImageFile(file, {
+      image: "overtimeLogoImage",
+      width: "overtimeLogoWidth",
+      height: "overtimeLogoHeight",
+    });
+
+  const clearOvertimeLogo = () =>
+    setForm((prev) => ({
+      ...prev,
+      overtimeLogoImage: "",
+      overtimeLogoWidth: 0,
+      overtimeLogoHeight: 0,
+    }));
+
   const buildExportPayload = () => ({
     role: form.role,
     name: form.name,
@@ -207,11 +227,11 @@ export default function App() {
               height: form.signatureHeight,
             }
           : null,
-        logo: form.logoImage
+        logo: form.overtimeLogoImage
           ? {
-              dataUri: form.logoImage,
-              width: form.logoWidth,
-              height: form.logoHeight,
+              dataUri: form.overtimeLogoImage,
+              width: form.overtimeLogoWidth,
+              height: form.overtimeLogoHeight,
             }
           : null,
       });
@@ -224,7 +244,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div>
-          <h1>MCO Timesheet Generator</h1>
+          <h1>Timesheet Builder</h1>
           <p className="subtitle">
             {activities.length} activities · {calendar.length} days
           </p>
@@ -264,6 +284,8 @@ export default function App() {
           onClearSignature={clearSignature}
           onLogo={handleLogo}
           onClearLogo={clearLogo}
+          onOvertimeLogo={handleOvertimeLogo}
+          onClearOvertimeLogo={clearOvertimeLogo}
           ticketError={tickets.error}
         />
         <div className="preview-container">

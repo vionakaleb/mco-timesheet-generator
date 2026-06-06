@@ -501,3 +501,113 @@ input[type="file"] {
     max-width: 140px; /* Slight scale down on tiny screens */
   }
 }
+
+.overtime-preview {
+  padding: 0;
+  background: #f5f5f5;
+}
+
+.overtime-doc {
+  background: #fff;
+  color: #333;
+  padding: 32px 40px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.overtime-doc-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.overtime-doc-logo {
+  max-height: 40px;
+  width: auto;
+}
+
+.overtime-doc-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 16px 0 24px;
+  color: #333;
+}
+
+.overtime-doc-intro {
+  font-size: 10px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.overtime-doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9px;
+}
+
+.overtime-doc-table th,
+.overtime-doc-table td {
+  border: 0.5px solid #333;
+  padding: 4px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.overtime-doc-table th {
+  background: #f0f0f0;
+  font-weight: bold;
+}
+
+.overtime-doc-table .merged-cell {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.overtime-doc-table .job-cell {
+  text-align: left;
+}
+
+.overtime-doc-table .total-row td {
+  font-weight: bold;
+}
+
+.overtime-doc-table .empty {
+  padding: 16px;
+  color: #888;
+  font-style: italic;
+}
+
+.overtime-doc-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 40px;
+  font-size: 10px;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-label {
+  margin-bottom: 16px;
+}
+
+.footer-sig {
+  min-height: 50px;
+  margin-bottom: 16px;
+}
+
+.footer-sig img {
+  max-height: 50px;
+  max-width: 100px;
+}
+
+.footer-name {
+  margin-bottom: 4px;
+  white-space: pre;
+}

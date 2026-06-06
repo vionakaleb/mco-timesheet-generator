@@ -1,4 +1,4 @@
-# Timesheet Generator
+# Timesheet Builder
 
 A React + Vite app that builds a monthly timesheet from a JSON ticket list and a chosen month/year. Day numbers, weekday labels, and weekends are computed from the date, so the calendar is always correct for the selected month. Exports a styled `.xlsx`.
 
