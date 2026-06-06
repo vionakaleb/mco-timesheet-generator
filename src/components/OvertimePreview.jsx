@@ -18,8 +18,6 @@ export default function OvertimePreview({ form, calendar, hours, dayTypes }) {
     defaultHours: form.defaultHours,
     month: Number(form.month),
     year: Number(form.year),
-    forcedDates: parseDateList(form.overtimeDates),
-    forcedOvertimeHours: Number(form.overtimeDefaultHours) || 0,
   });
 
   const totalDays = rows.length;
