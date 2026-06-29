@@ -4,6 +4,7 @@
   --gold: #b8860b;
   --ink: #1f2430;
   --muted: #6b7280;
+  --muted-light: #a7abb1;
   --line: #d8dce4;
   --bg: #f5f6f9;
   --panel: #ffffff;
@@ -48,6 +49,10 @@ body {
   font-size: 24px;
   letter-spacing: -0.01em;
   color: var(--navy);
+}
+
+.mt-2 {
+  margin-top: 10px !important;
 }
 
 .subtitle {
@@ -129,7 +134,7 @@ body {
 .field-hint {
   display: block;
   font-size: 11px;
-  color: var(--muted);
+  color: var(--muted-light);
 }
 
 input,

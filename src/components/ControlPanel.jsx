@@ -106,23 +106,23 @@ export default function ControlPanel({
       </div>
 
       <div className="grid-two">
-        <Field label="Cuti Bersama Date ">
+        <Field label="Cuti Bersama">
           <input
             value={form.cutiBersama}
             onChange={update("cutiBersama")}
-            placeholder="e.g. 3, 10"
+            placeholder="Date e.g. 3, 10"
           />
         </Field>
-        <Field label="Cuti Pribadi Date">
+        <Field label="Cuti Pribadi">
           <input
             value={form.cutiPribadi}
             onChange={update("cutiPribadi")}
-            placeholder="e.g. 13, 20"
+            placeholder="Date e.g. 13, 20"
           />
         </Field>
       </div>
 
-      <h2 className="panel-title">Activities</h2>
+      <h2 className="panel-title mt-2">Activities</h2>
 
       <Field label="General Activities (one per line)">
         <textarea
@@ -177,7 +177,7 @@ export default function ControlPanel({
       </Field>
       {ticketError ? <p className="error">{ticketError}</p> : null}
 
-      <h2 className="panel-title">Images</h2>
+      <h2 className="panel-title mt-2">Images</h2>
 
       <Field label="Employee Signature">
         <input
@@ -202,7 +202,7 @@ export default function ControlPanel({
           onChange={(event) => onLogo(event.target.files?.[0])}
         />
         <span className="field-hint">
-          Default to Mandiri MCO, replace if you are from other vendor.
+          Default Mandiri MCO, replace if from other vendor.
         </span>
       </Field>
       {form.logoImage ? (
@@ -221,7 +221,7 @@ export default function ControlPanel({
           onChange={(event) => onOvertimeLogo(event.target.files?.[0])}
         />
         <span className="field-hint">
-          Default to Mandiri, replace if you are from other company.
+          Default Mandiri, replace if from other company.
         </span>
       </Field>
       {form.overtimeLogoImage ? (
@@ -237,7 +237,7 @@ export default function ControlPanel({
         </div>
       ) : null}
 
-      <h2 className="panel-title">Overtime</h2>
+      <h2 className="panel-title mt-2">Overtime</h2>
 
       <div className="grid-two">
         <Field label="Unit Kerja">

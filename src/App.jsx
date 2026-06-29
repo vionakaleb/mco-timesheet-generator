@@ -312,7 +312,7 @@ export default function App() {
           className="field-label"
           target="_blank"
         >
-          <div className="field-label">© Viona Z. A. Kaleb</div>
+          <div className="field-label">© Viona Kaleb</div>
         </a>
       </footer>
     </div>
