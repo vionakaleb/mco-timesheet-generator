@@ -3,6 +3,7 @@ import autoTable from "jspdf-autotable";
 import { monthLabel } from "./calendar";
 import { buildOvertimeRows, describeOvertime } from "./overtime";
 import { LOGO_EXTENSION, LOGO_OVERTIME_BASE64 } from "../assets/logo";
+import { clampToLines } from "./text";
 
 const PAGE_MARGIN = 40;
 const FONT_FAMILY = "helvetica";
@@ -12,8 +13,30 @@ const LOGO_HEIGHT_PT = 40;
 const LOGO_WIDTH = 274;
 const LOGO_HEIGHT = 110;
 
+const CELL_PADDING = 4;
+const CELL_BORDER_WIDTH = 0.5;
+const DESCRIPTION_MAX_LINES = 1;
+
+const COLUMN_WIDTHS = {
+  name: 65,
+  date: 95,
+  unit: 70,
+  time: 70,
+  totalHours: 50,
+};
+
 const INTRO_TEXT =
   "Sehubung dengan adanya tugas pekerjaan dan/atau kegiatan kedinasan yang tidak dapat ditunda/ditangguhkan, sehingga membutuhkan penyelesaian dengan segera dengan ini, kami memerintahkan kepada pegawai yang tercantum dalam daftar dibawah ini yang menyelesaikan kerja lembur.";
+
+function descriptionColumnWidth(pageWidth) {
+  const tableWidth = pageWidth - PAGE_MARGIN * 2;
+  const fixedColumnsWidth = Object.values(COLUMN_WIDTHS).reduce(
+    (a, b) => a + b,
+    0,
+  );
+  const autoColumnWidth = tableWidth - fixedColumnsWidth;
+  return autoColumnWidth - CELL_PADDING * 2 - CELL_BORDER_WIDTH * 2;
+}
 
 function dataUriExtension(dataUri) {
   const match = /^data:image\/([a-zA-Z+]+);base64,/.exec(dataUri ?? "");
@@ -121,8 +144,11 @@ function drawFooter(doc, pageWidth, startY, form, signature) {
   doc.text(`Role  : ${form.approverRole || "-"}`, rightX, namesY + 14);
 }
 
-function buildTableBody(rows, form) {
+function buildTableBody(doc, maxDescriptionWidthPt, rows, form) {
   if (rows.length === 0) return [];
+
+  doc.setFont(FONT_FAMILY, "normal");
+  doc.setFontSize(9);
 
   return rows.map((row, i) => {
     const cells = [];
@@ -147,11 +173,18 @@ function buildTableBody(rows, form) {
 
     cells.push({ content: row.time });
     cells.push({ content: `${row.totalHours} Jam` });
+
+    const description = describeOvertime(
+      row,
+      form.weekdayOvertimeDesc || "-",
+      form.holidayOvertimeDesc || "-",
+    );
     cells.push({
-      content: describeOvertime(
-        row,
-        form.weekdayOvertimeDesc || "-",
-        form.holidayOvertimeDesc || "-",
+      content: clampToLines(
+        doc,
+        description,
+        maxDescriptionWidthPt,
+        DESCRIPTION_MAX_LINES,
       ),
       styles: { halign: "left" },
     });
@@ -211,7 +244,8 @@ export async function exportOvertimePDF({
   drawTitle(doc, pageWidth, PAGE_MARGIN + 70);
   const introEndY = drawIntro(doc, pageWidth, PAGE_MARGIN + 100);
 
-  const body = buildTableBody(rows, form);
+  const maxDescriptionWidthPt = descriptionColumnWidth(pageWidth);
+  const body = buildTableBody(doc, maxDescriptionWidthPt, rows, form);
   body.push(buildTotalRow(rows));
 
   autoTable(doc, {
@@ -232,9 +266,9 @@ export async function exportOvertimePDF({
     styles: {
       font: FONT_FAMILY,
       fontSize: 9,
-      cellPadding: 4,
+      cellPadding: CELL_PADDING,
       lineColor: BORDER_COLOR,
-      lineWidth: 0.5,
+      lineWidth: CELL_BORDER_WIDTH,
       textColor: TEXT_COLOR,
       valign: "middle",
       halign: "center",
@@ -247,11 +281,11 @@ export async function exportOvertimePDF({
       halign: "center",
     },
     columnStyles: {
-      0: { cellWidth: 65 },
-      1: { cellWidth: 95 },
-      2: { cellWidth: 70 },
-      3: { cellWidth: 70 },
-      4: { cellWidth: 50 },
+      0: { cellWidth: COLUMN_WIDTHS.name },
+      1: { cellWidth: COLUMN_WIDTHS.date },
+      2: { cellWidth: COLUMN_WIDTHS.unit },
+      3: { cellWidth: COLUMN_WIDTHS.time },
+      4: { cellWidth: COLUMN_WIDTHS.totalHours },
       5: { cellWidth: "auto", halign: "left" },
     },
   });

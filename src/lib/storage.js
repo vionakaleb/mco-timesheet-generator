@@ -3,6 +3,7 @@ const STORAGE_KEY = "timesheet-generator:form";
 const PERSIST_KEYS = [
   "name",
   "role",
+  "limitRows",
   "defaultHours",
   "departmentHead",
   "counterSign",
@@ -10,6 +11,11 @@ const PERSIST_KEYS = [
   "signatureWidth",
   "signatureHeight",
   "generalActivities",
+  "ticketsJson",
+  "unitKerja",
+  "approverRole",
+  "weekdayOvertimeDesc",
+  "holidayOvertimeDesc",
 ];
 
 export function loadForm() {
