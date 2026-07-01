@@ -154,7 +154,7 @@ export default function ControlPanel({
               <strong>1. Filter Issues:</strong>
             </p>
             <pre className="help-code">
-              {`project = "{project_name}" AND (assignee in ({user_ad}) OR Developer in ({user_ad}) OR cf[11927] in ({user_ad}) OR cf[16812] in ({user_ad}) OR cf[17011] in ({user_ad})) AND (created >= {start_date} AND created <= {end_date} OR updated >= {start_date} AND updated <= {end_date}) ORDER BY created ASC, updated DESC`}
+              {`project = "{project_name}" AND (assignee in ({user_ad}) OR Developer in ({user_ad}) OR cf[11927] in ({user_ad}) OR cf[16812] in ({user_ad}) OR cf[17011] in ({user_ad})) AND (resolved >= {start_date} AND resolved <= {end_date}) ORDER BY resolved ASC`}
             </pre>
             <p className="help-step">
               <strong>2. Check Network:</strong>{" "}
