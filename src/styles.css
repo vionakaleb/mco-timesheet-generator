@@ -304,7 +304,7 @@ td.day {
   text-align: center;
   padding: 4px 2px;
   font-size: 12px;
-  background: transparent;
+  background-color: rgba(238, 241, 247, 0.6);
 }
 
 .hour-input:focus {
