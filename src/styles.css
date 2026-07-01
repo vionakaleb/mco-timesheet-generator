@@ -55,6 +55,10 @@ body {
   margin-top: 10px !important;
 }
 
+.mt-6 {
+  margin-top: 30px !important;
+}
+
 .subtitle {
   margin: 4px 0 0;
   color: var(--muted);

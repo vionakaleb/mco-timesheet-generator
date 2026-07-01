@@ -19,7 +19,7 @@ const initialForm = {
   month: now.getMonth() + 1,
   year: now.getFullYear(),
   limitRows: 20,
-  defaultHours: "9",
+  defaultHours: "10",
   departmentHead: "",
   counterSign: "",
   cutiBersama: "",
@@ -52,6 +52,11 @@ export default function App() {
   const [form, setForm] = useState(createInitialForm);
   const [hours, setHours] = useState({});
   const [exportError, setExportError] = useState("");
+  const [holidayData, setHolidayData] = useState("");
+  const [holidayApiState, setHolidayApiState] = useState({
+    loading: true,
+    error: false,
+  });
 
   const year = Number(form.year);
   const month = Number(form.month);
@@ -90,9 +95,46 @@ export default function App() {
     return combined.length > limit ? combined.slice(0, limit) : combined;
   }, [generalList, tickets.items, form.limitRows]);
 
+  async function fetchNationalHoliday() {
+    setHolidayApiState({ error: false, loading: true });
+
+    try {
+      const response = await fetch(
+        `https://tanggalmerah.upset.dev/api/holidays?year=${year}&month=${month}`,
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response failure");
+      }
+
+      const result = await response.json();
+
+      const processDate = result?.data
+        ?.map((item) => item.date?.split("-")[2].replace(/^0/, ""))
+        .join(", ");
+
+      setHolidayData(processDate);
+      setForm((prev) => ({ ...prev, cutiBersama: processDate }));
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        setHolidayApiState({ error: true, loading: false });
+      }
+    } finally {
+      setHolidayApiState((prev) => ({ ...prev, loading: false }));
+    }
+  }
+
   useEffect(() => {
     setHours(buildHours(calendar, form.defaultHours, dayTypes));
   }, [calendar, form.defaultHours, dayTypes]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchNationalHoliday();
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     saveForm(form);
@@ -287,6 +329,7 @@ export default function App() {
           onOvertimeLogo={handleOvertimeLogo}
           onClearOvertimeLogo={clearOvertimeLogo}
           ticketError={tickets.error}
+          holidayApiState={holidayApiState}
         />
         <div className="preview-container">
           <TimesheetPreview
@@ -312,7 +355,7 @@ export default function App() {
           className="field-label"
           target="_blank"
         >
-          <div className="field-label">© Viona Kaleb</div>
+          <div className="field-label">Made with ♥︎ Viona Kaleb</div>
         </a>
       </footer>
     </div>

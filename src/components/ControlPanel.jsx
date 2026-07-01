@@ -14,6 +14,7 @@ export function Field({ label, children }) {
 
 export default function ControlPanel({
   form,
+  holidayApiState,
   onChange,
   onSignature,
   onClearSignature,
@@ -106,13 +107,19 @@ export default function ControlPanel({
       </div>
 
       <div className="grid-two">
-        <Field label="Cuti Bersama">
-          <input
-            value={form.cutiBersama}
-            onChange={update("cutiBersama")}
-            placeholder="Date e.g. 3, 10"
-          />
-        </Field>
+        {holidayApiState.loading ? (
+          <div className="mt-6">
+            <Field label="Loading holiday..." />
+          </div>
+        ) : (
+          <Field label="Cuti Bersama">
+            <input
+              value={form.cutiBersama}
+              onChange={update("cutiBersama")}
+              placeholder="Date e.g. 3, 10"
+            />
+          </Field>
+        )}
         <Field label="Cuti Pribadi">
           <input
             value={form.cutiPribadi}
