@@ -16,7 +16,7 @@ const FONT_FAMILY = "helvetica";
 const TEXT_COLOR = [51, 51, 51];
 const BORDER_COLOR = [51, 51, 51];
 
-const DESC_CHARS_PER_LINE = 60;
+const CELL_PADDING = 3;
 const DESC_MAX_LINES = 2;
 
 const SIGNATURE_MAX_WIDTH = 90;
@@ -153,12 +153,12 @@ function drawLogo(doc, customLogo) {
   }
 }
 
-function buildTableBody(activities, calendar, hours) {
+function buildTableBody(doc, activities, calendar, hours, descTextWidthPt) {
   return activities.map((desc, i) => {
     const row = [
       { content: String(i + 1) },
       {
-        content: clampToLines(desc, DESC_CHARS_PER_LINE, DESC_MAX_LINES),
+        content: clampToLines(doc, desc, descTextWidthPt, DESC_MAX_LINES),
         styles: { halign: "left" },
       },
     ];
@@ -303,16 +303,6 @@ export async function exportTimesheetPDF({
   );
 
   const head = buildHeadRows(calendar, dayTypes);
-  const body = buildTableBody(activities, calendar, hours);
-  body.push(buildTotalRow(calendar, hours));
-
-  if (counterSign && body.length > 1) {
-    const firstRow = body[0];
-    const spannedCells = firstRow.filter((c) => c.rowSpan);
-    if (spannedCells.length >= 2) {
-      spannedCells[spannedCells.length - 2].content = counterSign;
-    }
-  }
 
   const usableWidth = pageWidth - PAGE_MARGIN * 2;
 
@@ -334,6 +324,27 @@ export async function exportTimesheetPDF({
   if (dayColumnWidth < minDayWidth) {
     dayColumnWidth = minDayWidth;
     descColumnWidth = remainingAfterFixed - dayColumnWidth * calendar.length;
+  }
+
+  doc.setFont(FONT_FAMILY, "normal");
+  doc.setFontSize(8);
+  const descTextWidthPt = descColumnWidth - CELL_PADDING * 2;
+
+  const body = buildTableBody(
+    doc,
+    activities,
+    calendar,
+    hours,
+    descTextWidthPt,
+  );
+  body.push(buildTotalRow(calendar, hours));
+
+  if (counterSign && body.length > 1) {
+    const firstRow = body[0];
+    const spannedCells = firstRow.filter((c) => c.rowSpan);
+    if (spannedCells.length >= 2) {
+      spannedCells[spannedCells.length - 2].content = counterSign;
+    }
   }
 
   const columnStyles = {

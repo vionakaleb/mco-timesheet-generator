@@ -27,22 +27,36 @@ function wrapLines(text, charsPerLine) {
 }
 
 export function clampToLines(
+  doc,
   text,
-  charsPerLine,
+  maxWidthPt,
   maxLines = 2,
   ellipsis = "...",
 ) {
   const value = (text ?? "").trim();
   if (!value) return value;
 
-  const lines = wrapLines(value, charsPerLine);
-  if (lines.length <= maxLines) return value;
+  const lines = doc.splitTextToSize(value, maxWidthPt);
+  if (lines.length <= maxLines) return lines.join("\n");
 
   const kept = lines.slice(0, maxLines);
-  let last = kept[kept.length - 1];
-  if (last.length + ellipsis.length > charsPerLine) {
-    last = last.slice(0, Math.max(0, charsPerLine - ellipsis.length)).trimEnd();
+  kept[maxLines - 1] = truncateToFit(
+    doc,
+    kept[maxLines - 1],
+    maxWidthPt,
+    ellipsis,
+  );
+
+  return kept.join("\n");
+}
+
+function truncateToFit(doc, line, maxWidthPt, ellipsis) {
+  let truncated = line;
+  while (
+    truncated.length > 0 &&
+    doc.getTextWidth(truncated + ellipsis) > maxWidthPt
+  ) {
+    truncated = truncated.slice(0, -1).trimEnd();
   }
-  kept[kept.length - 1] = `${last}${ellipsis}`;
-  return kept.join(" ");
+  return `${truncated}${ellipsis}`;
 }
