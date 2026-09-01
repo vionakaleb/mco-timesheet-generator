@@ -352,10 +352,10 @@ export default function App() {
       <footer className="footer-container">
         <a
           href="https://viona-kaleb.com"
-          className="field-label"
+          className="field-hint"
           target="_blank"
         >
-          <div className="field-label">Made with ♥︎ Viona Kaleb</div>
+          <div className="field-hint">Made with ♥︎ Viona</div>
         </a>
       </footer>
     </div>
